@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Menu Phaser</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background-color: #111;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      user-select: none;
+    }
+
+    #game-container {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #info {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 18px;
+      color: #ccc;
+      pointer-events: none; /* impede clique no texto */
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container"></div>
+
+  <div id="info">Use as setas para se movimentar e pressione Espaço para interagir.</div>
+
+  <!-- Phaser 3 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+  <script src="menu.js"></script>
+</body>
+</html>
