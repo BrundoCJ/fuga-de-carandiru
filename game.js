@@ -5,34 +5,49 @@ class Bot {
     this.sprite.setScale(0.6);
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setBounce(1);
+
+    this.sprite.body.setSize(30, 40);
+    this.sprite.body.setOffset(15, 40);
+
+    this.maxHealth = 5;
+    this.health = this.maxHealth;
+    this.alive = true;
+
+    this.angry = false;   // fica bravo e persegue após tomar dano
+    this.angerHits = 0;   // conta os socos que tomou antes de atacar
+
+    this.hitsDealt = 0;   // quantos golpes já deu no jogador
+    this.maxHits = 3;     // limite de golpes causados no jogador
+
     this.setRandomVelocity();
     this.messageText = null;
+
+    this.healthBar = scene.add.graphics();
+    this.healthBar.setAlpha(0);
   }
 
   setRandomVelocity() {
+    if (!this.alive || this.angry) {
+      this.sprite.setVelocity(0, 0);
+      return;
+    }
     const vx = Phaser.Math.Between(-50, 50);
     const vy = Phaser.Math.Between(-50, 50);
     this.sprite.setVelocity(vx, vy);
   }
 
   updateAnimation() {
+    if (!this.alive) return;
     const vx = this.sprite.body.velocity.x;
     const vy = this.sprite.body.velocity.y;
 
     if (Math.abs(vx) > Math.abs(vy)) {
-      if (vx > 0) {
-        this.playAnimIfNotPlaying('walk_right');
-      } else if (vx < 0) {
-        this.playAnimIfNotPlaying('walk_left');
-      } else {
-        this.stopAnimAndSetFrame('right');
-      }
+      if (vx > 0) this.playAnimIfNotPlaying('walk_right');
+      else if (vx < 0) this.playAnimIfNotPlaying('walk_left');
+      else this.stopAnimAndSetFrame('right');
     } else if (Math.abs(vy) > 0) {
-      if (vy > 0) {
-        this.playAnimIfNotPlaying('walk_down');
-      } else if (vy < 0) {
-        this.playAnimIfNotPlaying('walk_up');
-      }
+      if (vy > 0) this.playAnimIfNotPlaying('walk_down');
+      else if (vy < 0) this.playAnimIfNotPlaying('walk_up');
     } else {
       this.stopAnimAndSetFrame('down');
     }
@@ -46,29 +61,102 @@ class Bot {
 
   stopAnimAndSetFrame(direction) {
     this.sprite.anims.stop();
-
     const frameKeyMap = {
       down: 'player_frente1',
       up: 'player_costas1',
       left: 'player_esquerda1',
       right: 'player_direita1'
     };
-
     this.sprite.setTexture(frameKeyMap[direction]);
   }
 
   takeDamageFrom(player) {
-    const dx = this.sprite.x - player.x;
-    const dy = this.sprite.y - player.y;
-    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-    const knockbackPower = 100;
+    if (!this.alive) return;
 
-    this.sprite.setVelocity((dx / dist) * knockbackPower, (dy / dist) * knockbackPower);
+    this.health--;
+    if (this.health <= 0) {
+      this.die();
+    } else {
+      if (!this.angry) {
+        this.angerHits++;
+        if (this.angerHits >= 3) {
+          this.angry = true;
+          this.startChasing(player);
+        }
+      }
+
+      const dx = this.sprite.x - player.x;
+      const dy = this.sprite.y - player.y;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      const knockbackPower = 100;
+
+      this.sprite.setVelocity((dx / dist) * knockbackPower, (dy / dist) * knockbackPower);
+      this.sprite.setAlpha(0.5);
+
+      this.showHealthBar();
+
+      this.scene.time.delayedCall(500, () => {
+        this.sprite.setAlpha(1);
+      });
+    }
+  }
+
+  startChasing(target) {
+    this.angry = true;
+    this.chaseTarget = target;
+  }
+
+  update() {
+    if (!this.alive) return;
+    if (this.angry && this.chaseTarget) {
+      const speed = 80;
+      const dx = this.chaseTarget.x - this.sprite.x;
+      const dy = this.chaseTarget.y - this.sprite.y;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+
+      this.sprite.setVelocity((dx / dist) * speed, (dy / dist) * speed);
+    }
+  }
+
+  die() {
+    this.alive = false;
+    this.sprite.setVelocity(0, 0);
+    this.sprite.setTint(0xff6666);
     this.sprite.setAlpha(0.5);
+    this.sprite.anims.stop();
+    this.healthBar.clear();
+    this.healthBar.setAlpha(0);
+  }
 
-    this.scene.time.delayedCall(500, () => {
-      this.sprite.setAlpha(1);
+  showHealthBar() {
+    const width = 30;
+    const height = 5;
+    const lifeRatio = this.health / this.maxHealth;
+
+    this.healthBar.clear();
+    this.healthBar.fillStyle(0x00ff00, 0.4);
+    this.healthBar.fillRect(this.sprite.x - width / 2, this.sprite.y - 55, width * lifeRatio, height);
+    this.healthBar.setAlpha(1);
+
+    if(this.healthBarTimer) {
+      this.healthBarTimer.remove(false);
+    }
+
+    this.healthBarTimer = this.scene.time.delayedCall(3000, () => {
+      this.healthBar.setAlpha(0);
     });
+  }
+
+  updateHealthBarPosition() {
+    if(this.healthBar.alpha > 0){
+      const width = 30;
+      const height = 5;
+      const lifeRatio = this.health / this.maxHealth;
+
+      this.healthBar.clear();
+      this.healthBar.fillStyle(0x00ff00, 0.4);
+      this.healthBar.fillRect(this.sprite.x - width / 2, this.sprite.y - 55, width * lifeRatio, height);
+    }
   }
 }
 
@@ -80,16 +168,31 @@ class Guarda {
     this.sprite.setScale(0.4);
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setBounce(1);
+
+    this.sprite.body.setSize(25, 35);
+    this.sprite.body.setOffset(10, 45);
+
     this.originalY = y;
 
     this.isChasing = false;
     this.chaseTimer = null;
 
+    this.maxHealth = 5;
+    this.health = this.maxHealth;
+    this.alive = true;
+
     this.setRandomVelocity();
     this.messageText = null;
+
+    this.healthBar = scene.add.graphics();
+    this.healthBar.setAlpha(0);
   }
 
   setRandomVelocity() {
+    if (!this.alive) {
+      this.sprite.setVelocity(0, 0);
+      return;
+    }
     if (!this.isChasing) {
       const vx = Phaser.Math.Between(-50, 50);
       const vy = Phaser.Math.Between(-50, 50);
@@ -98,6 +201,7 @@ class Guarda {
   }
 
   startChasing(target) {
+    if (!this.alive) return;
     this.isChasing = true;
     this.chaseTarget = target;
 
@@ -113,29 +217,24 @@ class Guarda {
   }
 
   updateAnimation() {
+    if (!this.alive) return;
     const vx = this.sprite.body.velocity.x;
     const vy = this.sprite.body.velocity.y;
 
     if (Math.abs(vx) > Math.abs(vy)) {
-      if (vx > 0) {
-        this.playAnimIfNotPlaying('guarda_walk_right');
-      } else if (vx < 0) {
-        this.playAnimIfNotPlaying('guarda_walk_left');
-      } else {
-        this.stopAnimAndSetFrame('right');
-      }
+      if (vx > 0) this.playAnimIfNotPlaying('guarda_walk_right');
+      else if (vx < 0) this.playAnimIfNotPlaying('guarda_walk_left');
+      else this.stopAnimAndSetFrame('right');
     } else if (Math.abs(vy) > 0) {
-      if (vy > 0) {
-        this.playAnimIfNotPlaying('guarda_walk_down');
-      } else if (vy < 0) {
-        this.playAnimIfNotPlaying('guarda_walk_up');
-      }
+      if (vy > 0) this.playAnimIfNotPlaying('guarda_walk_down');
+      else if (vy < 0) this.playAnimIfNotPlaying('guarda_walk_up');
     } else {
       this.stopAnimAndSetFrame('down');
     }
   }
 
   update() {
+    if (!this.alive) return;
     if (this.isChasing && this.chaseTarget) {
       const speed = 60;
       const dx = this.chaseTarget.x - this.sprite.x;
@@ -185,20 +284,69 @@ class Guarda {
   }
 
   takeDamageFrom(player) {
-    const dx = this.sprite.x - player.x;
-    const dy = this.sprite.y - player.y;
-    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-    const knockbackPower = 100;
+    if (!this.alive) return;
 
-    this.sprite.setVelocity((dx / dist) * knockbackPower, (dy / dist) * knockbackPower);
-    this.sprite.setAlpha(0.5);
+    this.health--;
+    if (this.health <= 0) {
+      this.die();
+    } else {
+      const dx = this.sprite.x - player.x;
+      const dy = this.sprite.y - player.y;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      const knockbackPower = 100;
 
-    this.scene.time.delayedCall(500, () => {
-      this.sprite.setAlpha(1);
-    });
+      this.sprite.setVelocity((dx / dist) * knockbackPower, (dy / dist) * knockbackPower);
+      this.sprite.setAlpha(0.5);
 
-    // Chama a perseguição dos 3 guardas
+      this.showHealthBar();
+
+      this.scene.time.delayedCall(500, () => {
+        this.sprite.setAlpha(1);
+      });
+    }
+
     this.scene.startChasingAllGuards(player);
+  }
+
+  die() {
+    this.alive = false;
+    this.sprite.setVelocity(0, 0);
+    this.sprite.setTint(0xff6666);
+    this.sprite.setAlpha(0.5);
+    this.sprite.anims.stop();
+    this.healthBar.clear();
+    this.healthBar.setAlpha(0);
+  }
+
+  showHealthBar() {
+    const width = 30;
+    const height = 5;
+    const lifeRatio = this.health / this.maxHealth;
+
+    this.healthBar.clear();
+    this.healthBar.fillStyle(0x00ff00, 0.4);
+    this.healthBar.fillRect(this.sprite.x - width / 2, this.sprite.y - 55, width * lifeRatio, height);
+    this.healthBar.setAlpha(1);
+
+    if(this.healthBarTimer) {
+      this.healthBarTimer.remove(false);
+    }
+
+    this.healthBarTimer = this.scene.time.delayedCall(3000, () => {
+      this.healthBar.setAlpha(0);
+    });
+  }
+
+  updateHealthBarPosition() {
+    if(this.healthBar.alpha > 0){
+      const width = 30;
+      const height = 5;
+      const lifeRatio = this.health / this.maxHealth;
+
+      this.healthBar.clear();
+      this.healthBar.fillStyle(0x00ff00, 0.4);
+      this.healthBar.fillRect(this.sprite.x - width / 2, this.sprite.y - 55, width * lifeRatio, height);
+    }
   }
 }
 
@@ -242,7 +390,13 @@ class MainScene extends Phaser.Scene {
       "Lembre-se: aqui dentro, o tempo passa devagar."
     ];
 
-    this.guards = []; // para guardar os 3 guardas que perseguem
+    this.guards = [];
+    this.lives = 10;
+    this.maxLives = 10;
+    this.livesSprites = [];
+    this.livesBar = null;
+
+    this.playerInvincible = false;
   }
 
   preload() {
@@ -267,6 +421,8 @@ class MainScene extends Phaser.Scene {
     this.load.image('guarda_direita2', 'assets/guarda_direita2.png');
     this.load.image('guarda_esquerda1', 'assets/guarda_esquerda1.png');
     this.load.image('guarda_esquerda2', 'assets/guarda_esquerda2.png');
+
+    this.load.image('vida', 'assets/vida.png');
   }
 
   create() {
@@ -354,6 +510,8 @@ class MainScene extends Phaser.Scene {
     this.physics.add.existing(this.player);
     this.player.body.setCollideWorldBounds(true);
     this.player.setScale(0.6);
+    this.player.body.setSize(30, 40);
+    this.player.body.setOffset(15, 40);
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -363,10 +521,10 @@ class MainScene extends Phaser.Scene {
     for (let i = 0; i < 5; i++) {
       const x = Phaser.Math.Between(50, 750);
       const y = Phaser.Math.Between(50, 550);
-      this.bots.push(new Bot(this, x, y));
+      const bot = new Bot(this, x, y);
+      this.bots.push(bot);
     }
 
-    // Criar 3 guardas
     this.guards = [];
     for(let i = 0; i < 3; i++){
       let guardX = Phaser.Math.Between(300, 500);
@@ -375,6 +533,28 @@ class MainScene extends Phaser.Scene {
       this.guards.push(guard);
       this.bots.push(guard);
     }
+
+    // Barra verde de vida do jogador (10 vidas)
+    this.lives = 10;
+    this.maxLives = 10;
+    this.livesBar = this.add.graphics();
+    this.drawLivesBar();
+
+    // Algema (vidas) no canto superior direito (5 vidas)
+    this.livesSprites = [];
+    const startX = this.sys.game.config.width - 35;
+    const startY = 10;
+    for(let i=0; i<5; i++) {
+      const vidaSprite = this.add.image(startX - i * 30, startY, 'vida');
+      vidaSprite.setOrigin(0, 0);
+      vidaSprite.setScale(0.04);
+      this.livesSprites.push(vidaSprite);
+    }
+    this.updateLivesSprites();
+
+    this.playerInvincible = false;
+
+    this.physics.add.overlap(this.player, this.bots.map(b => b.sprite), this.handlePlayerGuardCollision, null, this);
 
     this.time.addEvent({
       delay: 3000,
@@ -385,10 +565,63 @@ class MainScene extends Phaser.Scene {
     });
   }
 
+  drawLivesBar() {
+    const width = 150;
+    const height = 10;
+    const x = 10;
+    const y = 10;
+
+    this.livesBar.clear();
+    this.livesBar.fillStyle(0x008000, 1);
+    this.livesBar.fillRect(x, y, (this.lives / this.maxLives) * width, height);
+    this.livesBar.lineStyle(2, 0x004000);
+    this.livesBar.strokeRect(x, y, width, height);
+  }
+
+  updateLivesSprites() {
+    for(let i = 0; i < this.livesSprites.length; i++) {
+      this.livesSprites[i].setVisible(i < this.lives / 2);
+    }
+  }
+
   startChasingAllGuards(player) {
     this.guards.forEach(guard => {
       guard.startChasing(player);
     });
+  }
+
+  handlePlayerGuardCollision(playerSprite, botSprite) {
+    const bot = this.bots.find(b => b.sprite === botSprite);
+    if(bot instanceof Guarda || (bot instanceof Bot && bot.angry)){
+      if (!this.playerInvincible) {
+
+        if(bot instanceof Bot && bot.hitsDealt >= bot.maxHits) {
+          // Bot já bateu 3x, para de perseguir e volta a andar aleatoriamente
+          bot.angry = false;
+          bot.chaseTarget = null;
+          bot.setRandomVelocity();
+          return; // Não causa mais dano
+        }
+
+        this.playerInvincible = true;
+
+        this.lives--;
+        this.drawLivesBar();
+        this.updateLivesSprites();
+
+        if(bot instanceof Bot) {
+          bot.hitsDealt++;
+        }
+
+        this.startChasingAllGuards(this.player);
+
+        if (this.lives <= 0) {
+          this.scene.restart();
+        }
+
+        this.time.delayedCall(1500, () => { this.playerInvincible = false; });
+      }
+    }
   }
 
   update() {
@@ -449,10 +682,11 @@ class MainScene extends Phaser.Scene {
     }
 
     this.bots.forEach(bot => {
-      if (bot instanceof Guarda) {
+      if (bot instanceof Guarda || bot instanceof Bot) {
         bot.update();
+        bot.updateAnimation();
+        bot.updateHealthBarPosition();
       }
-      bot.updateAnimation();
       if (bot.messageText) {
         bot.messageText.setPosition(bot.sprite.x, bot.sprite.y - 40);
       }
