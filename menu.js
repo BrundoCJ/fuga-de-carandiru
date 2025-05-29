@@ -1,3 +1,4 @@
+
 class MenuScene extends Phaser.Scene {
   constructor() {
     super('MenuScene');
@@ -22,7 +23,7 @@ class MenuScene extends Phaser.Scene {
     this.start.setInteractive({ cursor: 'pointer' });
 
     this.start.on('pointerdown', () => {
-      this.scene.start('MainGameScene');
+      this.scene.start('LevelOneScene');
     });
 
     this.scale.on('resize', this.resize, this);
@@ -54,35 +55,19 @@ class MainGameScene extends Phaser.Scene {
 
   preload() {
     this.load.image('gameBackground', 'assets/gameBackground.png');
-    this.load.image('newGame', 'assets/new_game.png');
   }
 
   create() {
     this.bg = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'gameBackground');
     this.bg.setDisplaySize(this.cameras.main.width, this.cameras.main.height);
 
-    this.add.text(this.cameras.main.centerX, 50, 'Bem-vindo!', {
-      fontSize: '40px',
-      fill: '#fff'
+    this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, `Bem-vindo ao jogo!`, {
+      fontFamily: "'Press Start 2P', cursive, monospace",
+      fontSize: '24px',
+      fill: '#00FF00',
+      stroke: '#000',
+      strokeThickness: 4
     }).setOrigin(0.5);
-
-    const newGameImage = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'newGame');
-    newGameImage.setScale(0.25);
-    newGameImage.setAlpha(0);
-
-    newGameImage.setInteractive({ cursor: 'pointer' });
-
-    newGameImage.on('pointerdown', () => {
-      this.scene.start('LevelOneScene');
-    });
-
-    this.tweens.add({
-      targets: newGameImage,
-      alpha: { from: 0, to: 1 },
-      duration: 500,
-      yoyo: true,
-      repeat: -1
-    });
 
     this.scale.on('resize', this.resize, this);
   }
@@ -102,49 +87,40 @@ class LevelOneScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.spritesheet('player', 'assets/player_spritesheet.png', {
-      frameWidth: 500,
-      frameHeight: 500
-    });
+    this.load.image('newGameImage', 'assets/new_game.png');
     this.load.image('gameBackground', 'assets/gameBackground.png');
   }
 
   create() {
     this.bg = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'gameBackground');
     this.bg.setDisplaySize(this.cameras.main.width, this.cameras.main.height);
-    this.bg.setDepth(0);
 
-    this.cameras.main.setBackgroundColor('#222');
+    this.newGame = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'newGameImage')
+      .setOrigin(0.5)
+      .setScale(0.5)
+      .setInteractive({ cursor: 'pointer' });
 
-    this.add.text(this.cameras.main.centerX, this.cameras.main.height * 0.1, 'Selecione o nome do seu personagem', {
-      fontSize: '32px',
-      fill: '#fff'
-    }).setOrigin(0.5);
+    this.newGameOriginalY = this.newGame.y;
 
-    this.player = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, 'player');
-    this.player.setScale(1);
-    this.player.setFrame(0);
-
-    // ✅ Animação de respiração
-    this.tweens.add({
-      targets: this.player,
-      y: this.player.y - 10,   // sobe 10px
-      duration: 1000,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut'
+    this.newGame.on('pointerdown', () => {
+      this.scene.start('MainGameScene');
     });
 
     this.scale.on('resize', this.resize, this);
   }
 
+  update(time, delta) {
+    const amplitude = 10;
+    const speed = 0.002;
+    this.newGame.y = this.newGameOriginalY + Math.sin(time * speed) * amplitude;
+  }
+
   resize(gameSize) {
     const width = gameSize.width;
     const height = gameSize.height;
-
     this.cameras.resize(width, height);
     this.bg.setPosition(width / 2, height / 2).setDisplaySize(width, height);
-    this.player.setPosition(width / 2, height / 2);
+    this.newGame.setPosition(width / 2, height / 2);
   }
 }
 
@@ -153,7 +129,7 @@ const config = {
   width: window.innerWidth,
   height: window.innerHeight,
   parent: 'game-container',
-  scene: [MenuScene, MainGameScene, LevelOneScene],
+  scene: [MenuScene, LevelOneScene, MainGameScene],
   scale: {
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH
