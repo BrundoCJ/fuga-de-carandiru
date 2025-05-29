@@ -8,6 +8,7 @@ class MenuScene extends Phaser.Scene {
     this.load.image('background', 'assets/background.png');
     this.load.image('title', 'assets/title.png');
     this.load.image('start', 'assets/start.png');
+    this.load.image('mapBg', 'assets/map.png');
   }
 
   create() {

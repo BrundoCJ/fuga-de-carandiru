@@ -423,10 +423,16 @@ class MainScene extends Phaser.Scene {
     this.load.image('guarda_esquerda2', 'assets/guarda_esquerda2.png');
 
     this.load.image('vida', 'assets/vida.png');
+
+
+    this.load.image('map', 'assets/map.png');
   }
 
   create() {
-    this.cameras.main.setBackgroundColor('#99cccc');
+    // Adiciona o map.png cobrindo toda a tela
+    this.add.image(0, 0, 'map')
+      .setOrigin(0, 0)                                      // canto superior-esquerdo
+      .setDisplaySize(this.scale.width, this.scale.height); // estica para preencher
 
     this.anims.create({
       key: 'walk_down',
