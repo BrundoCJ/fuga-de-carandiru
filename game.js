@@ -9,7 +9,7 @@ class Bot {
     this.sprite.body.setSize(30, 40);
     this.sprite.body.setOffset(15, 40);
 
-    this.maxHealth = 5;
+    this.maxHealth = 50;
     this.health = this.maxHealth;
     this.alive = true;
 
@@ -170,14 +170,14 @@ class Guarda {
     this.sprite.setBounce(1);
 
     this.sprite.body.setSize(25, 35);
-    this.sprite.body.setOffset(10, 45);
+    this.sprite.body.setOffset(30, 45);
 
     this.originalY = y;
 
     this.isChasing = false;
     this.chaseTimer = null;
 
-    this.maxHealth = 5;
+    this.maxHealth = 100;
     this.health = this.maxHealth;
     this.alive = true;
 
@@ -234,6 +234,8 @@ class Guarda {
   }
 
   update() {
+    
+    
     if (!this.alive) return;
     if (this.isChasing && this.chaseTarget) {
       const speed = 60;
@@ -429,6 +431,8 @@ class MainScene extends Phaser.Scene {
   }
 
   create() {
+    
+    
     // Adiciona o map.png cobrindo toda a tela
     this.add.image(0, 0, 'map')
       .setOrigin(0, 0)                                      // canto superior-esquerdo
@@ -519,6 +523,11 @@ class MainScene extends Phaser.Scene {
     this.player.body.setSize(30, 40);
     this.player.body.setOffset(15, 40);
 
+    this.cameras.main.startFollow(this.player);
+
+    // Definindo o zoom (2x)
+    this.cameras.main.setZoom(2);
+
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.zKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
@@ -532,12 +541,22 @@ class MainScene extends Phaser.Scene {
     }
 
     this.guards = [];
-    for(let i = 0; i < 3; i++){
+    for(let i = 0; i < 7; i++){
       let guardX = Phaser.Math.Between(300, 500);
       let guardY = Phaser.Math.Between(300, 500);
       const guard = new Guarda(this, guardX, guardY);
       this.guards.push(guard);
       this.bots.push(guard);
+    }
+
+    // Adiciona colisão entre o jogador e os bots
+    this.physics.add.collider(this.player, this.bots.map(b => b.sprite));
+
+    // Adiciona colisão entre os bots para evitar sobreposição entre eles
+    for (let i = 0; i < this.bots.length; i++) {
+      for (let j = i + 1; j < this.bots.length; j++) {
+        this.physics.add.collider(this.bots[i].sprite, this.bots[j].sprite);
+      }
     }
 
     // Barra verde de vida do jogador (10 vidas)
@@ -631,6 +650,7 @@ class MainScene extends Phaser.Scene {
   }
 
   update() {
+    
     const speed = 100;
     this.player.body.setVelocity(0);
 
@@ -720,3 +740,4 @@ class MainScene extends Phaser.Scene {
     });
   }
 }
+
