@@ -48,39 +48,6 @@ class MenuScene extends Phaser.Scene {
   }
 }
 
-class MainGameScene extends Phaser.Scene {
-  constructor() {
-    super('MainGameScene');
-  }
-
-  preload() {
-    this.load.image('gameBackground', 'assets/gameBackground.png');
-  }
-
-  create() {
-    this.bg = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'gameBackground');
-    this.bg.setDisplaySize(this.cameras.main.width, this.cameras.main.height);
-
-    this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, `Bem-vindo ao jogo!`, {
-      fontFamily: "'Press Start 2P', cursive, monospace",
-      fontSize: '24px',
-      fill: '#00FF00',
-      stroke: '#000',
-      strokeThickness: 4
-    }).setOrigin(0.5);
-
-    this.scale.on('resize', this.resize, this);
-  }
-
-  resize(gameSize) {
-    const width = gameSize.width;
-    const height = gameSize.height;
-
-    this.cameras.resize(width, height);
-    this.bg.setPosition(width / 2, height / 2).setDisplaySize(width, height);
-  }
-}
-
 class LevelOneScene extends Phaser.Scene {
   constructor() {
     super('LevelOneScene');
@@ -103,7 +70,7 @@ class LevelOneScene extends Phaser.Scene {
     this.newGameOriginalY = this.newGame.y;
 
     this.newGame.on('pointerdown', () => {
-      this.scene.start('MainGameScene');
+      this.scene.start('MainScene');
     });
 
     this.scale.on('resize', this.resize, this);
@@ -129,7 +96,8 @@ const config = {
   width: window.innerWidth,
   height: window.innerHeight,
   parent: 'game-container',
-  scene: [MenuScene, LevelOneScene, MainGameScene],
+  physics: { default: 'arcade', arcade: { debug: false } }, // Adicionar physics do game.js
+  scene: [MenuScene, LevelOneScene, MainScene], // Adicionar MainScene aqui
   scale: {
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH
