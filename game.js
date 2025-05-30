@@ -2,12 +2,12 @@ class Bot {
   constructor(scene, x, y) {
     this.scene = scene;
     this.sprite = scene.physics.add.sprite(x, y, 'player_frente1');
-    this.sprite.setScale(0.6);
+    this.sprite.setScale(0.5);
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setBounce(1);
 
-    this.sprite.body.setSize(30, 40);
-    this.sprite.body.setOffset(15, 40);
+    this.sprite.body.setSize(30, 70);
+    this.sprite.body.setOffset(15, 10);
 
     this.maxHealth = 50;
     this.health = this.maxHealth;
@@ -165,12 +165,12 @@ class Guarda {
     this.scene = scene;
     this.sprite = scene.physics.add.sprite(x, y, 'guarda_direita1');
     this.sprite.setOrigin(0.5, 1);
-    this.sprite.setScale(0.4);
+    this.sprite.setScale(0.3);
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setBounce(1);
 
-    this.sprite.body.setSize(25, 35);
-    this.sprite.body.setOffset(30, 45);
+    this.sprite.body.setSize(70, 130);
+    this.sprite.body.setOffset(15, 10);
 
     this.originalY = y;
 
@@ -432,11 +432,12 @@ class MainScene extends Phaser.Scene {
 
   create() {
     
-    
     // Adiciona o map.png cobrindo toda a tela
     this.add.image(0, 0, 'map')
       .setOrigin(0, 0)                                      // canto superior-esquerdo
       .setDisplaySize(this.scale.width, this.scale.height); // estica para preencher
+
+      
 
     this.anims.create({
       key: 'walk_down',
@@ -519,14 +520,15 @@ class MainScene extends Phaser.Scene {
     this.player = this.add.sprite(400, 300, 'player_frente1');
     this.physics.add.existing(this.player);
     this.player.body.setCollideWorldBounds(true);
-    this.player.setScale(0.6);
-    this.player.body.setSize(30, 40);
-    this.player.body.setOffset(15, 40);
+    this.player.setScale(0.5);
+    this.player.body.setSize(30, 70);
+    this.player.body.setOffset(15, 9);
 
     this.cameras.main.startFollow(this.player);
+    
 
     // Definindo o zoom (2x)
-    this.cameras.main.setZoom(2);
+    this.cameras.main.setZoom(2.5);
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -588,6 +590,39 @@ class MainScene extends Phaser.Scene {
         this.bots.forEach(bot => bot.setRandomVelocity());
       }
     });
+
+    //BARREIRAS ==========================================================
+
+    // Array para guardar as barreiras
+this.walls = [];
+
+// Cria primeira barreira invisível
+const barrier1 = this.add.rectangle(195, 250, 500, 10);
+this.physics.add.existing(barrier1, true); // corpo estático
+barrier1.setVisible(false);
+this.walls.push(barrier1);
+
+// Cria segunda barreira invisível
+const barrier2 = this.add.rectangle(195, 360, 130, 25);
+this.physics.add.existing(barrier2, true);
+barrier2.setVisible(false);
+this.walls.push(barrier2);
+
+// Cria terceira barreira invisível
+const barrier3 = this.add.rectangle(600, 400, 300, 20);
+this.physics.add.existing(barrier3, true);
+barrier3.setVisible(false);
+this.walls.push(barrier3);
+
+// Adicionar colisões para todas as barreiras:
+this.walls.forEach(barrier => {
+  this.physics.add.collider(this.player, barrier);
+  this.physics.add.collider(this.bots.map(b => b.sprite), barrier);
+  this.physics.add.collider(this.guards.map(g => g.sprite), barrier);
+
+});
+
+   //BARREIRAS ==========================================================
   }
 
   drawLivesBar() {
@@ -601,6 +636,8 @@ class MainScene extends Phaser.Scene {
     this.livesBar.fillRect(x, y, (this.lives / this.maxLives) * width, height);
     this.livesBar.lineStyle(2, 0x004000);
     this.livesBar.strokeRect(x, y, width, height);
+
+    
   }
 
   updateLivesSprites() {
@@ -740,4 +777,5 @@ class MainScene extends Phaser.Scene {
     });
   }
 }
+
 
