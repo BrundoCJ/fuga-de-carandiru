@@ -97,7 +97,7 @@ const config = {
   width: window.innerWidth,
   height: window.innerHeight,
   parent: 'game-container',
-  physics: { default: 'arcade', arcade: { debug: false } }, // Adicionar physics do game.js
+  physics: { default: 'arcade', arcade: { debug: true } }, // Adicionar physics do game.js
   scene: [MenuScene, LevelOneScene, MainScene], // Adicionar MainScene aqui
   scale: {
     mode: Phaser.Scale.RESIZE,
