@@ -1,33 +1,40 @@
-
 class MenuScene extends Phaser.Scene {
   constructor() {
-    super('MenuScene');
+    super("MenuScene");
   }
 
   preload() {
-    this.load.image('background', 'assets/background.png');
-    this.load.image('title', 'assets/title.png');
-    this.load.image('start', 'assets/start.png');
-    this.load.image('mapBg', 'assets/map.png');
+    this.load.image("background", "assets/background.png");
+    this.load.image("title", "assets/title.png");
+    this.load.image("start", "assets/start.png");
+    this.load.image("mapBg", "assets/map.png");
   }
 
   create() {
-    this.bg = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'background');
+    this.bg = this.add.image(
+      this.cameras.main.centerX,
+      this.cameras.main.centerY,
+      "background"
+    );
     this.bg.setDisplaySize(this.cameras.main.width, this.cameras.main.height);
 
-    this.title = this.add.image(this.cameras.main.centerX, 150, 'title').setScale(0.5);
+    this.title = this.add
+      .image(this.cameras.main.centerX, 150, "title")
+      .setScale(0.5);
     this.titleOriginalY = this.title.y;
 
-    this.start = this.add.image(this.cameras.main.centerX, 300, 'start').setScale(0.25);
+    this.start = this.add
+      .image(this.cameras.main.centerX, 300, "start")
+      .setScale(0.25);
     this.startOriginalY = this.start.y;
 
-    this.start.setInteractive({ cursor: 'pointer' });
+    this.start.setInteractive({ cursor: "pointer" });
 
-    this.start.on('pointerdown', () => {
-      this.scene.start('LevelOneScene');
+    this.start.on("pointerdown", () => {
+      this.scene.start("LevelOneScene");
     });
 
-    this.scale.on('resize', this.resize, this);
+    this.scale.on("resize", this.resize, this);
   }
 
   update(time, delta) {
@@ -51,30 +58,39 @@ class MenuScene extends Phaser.Scene {
 
 class LevelOneScene extends Phaser.Scene {
   constructor() {
-    super('LevelOneScene');
+    super("LevelOneScene");
   }
 
   preload() {
-    this.load.image('newGameImage', 'assets/new_game.png');
-    this.load.image('gameBackground', 'assets/gameBackground.png');
+    this.load.image("newGameImage", "assets/new_game.png");
+    this.load.image("gameBackground", "assets/gameBackground.png");
   }
 
   create() {
-    this.bg = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'gameBackground');
+    this.bg = this.add.image(
+      this.cameras.main.centerX,
+      this.cameras.main.centerY,
+      "gameBackground"
+    );
     this.bg.setDisplaySize(this.cameras.main.width, this.cameras.main.height);
 
-    this.newGame = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'newGameImage')
+    this.newGame = this.add
+      .image(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        "newGameImage"
+      )
       .setOrigin(0.5)
       .setScale(0.5)
-      .setInteractive({ cursor: 'pointer' });
+      .setInteractive({ cursor: "pointer" });
 
     this.newGameOriginalY = this.newGame.y;
 
-    this.newGame.on('pointerdown', () => {
-      this.scene.start('MainScene');
+    this.newGame.on("pointerdown", () => {
+      this.scene.start("MainScene");
     });
 
-    this.scale.on('resize', this.resize, this);
+    this.scale.on("resize", this.resize, this);
   }
 
   update(time, delta) {
@@ -96,13 +112,13 @@ const config = {
   type: Phaser.AUTO,
   width: window.innerWidth,
   height: window.innerHeight,
-  parent: 'game-container',
-  physics: { default: 'arcade', arcade: { debug: true } }, // Adicionar physics do game.js
+  parent: "game-container",
+  physics: { default: "arcade", arcade: { debug: true } }, // Adicionar physics do game.js
   scene: [MenuScene, LevelOneScene, MainScene], // Adicionar MainScene aqui
   scale: {
     mode: Phaser.Scale.RESIZE,
-    autoCenter: Phaser.Scale.CENTER_BOTH
-  }
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
 };
 
 const game = new Phaser.Game(config);

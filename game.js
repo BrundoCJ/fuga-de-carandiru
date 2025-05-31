@@ -1,7 +1,7 @@
 class Bot {
   constructor(scene, x, y) {
     this.scene = scene;
-    this.sprite = scene.physics.add.sprite(x, y, 'player_frente1');
+    this.sprite = scene.physics.add.sprite(x, y, "player_frente1");
     this.sprite.setScale(0.5);
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setBounce(1);
@@ -13,11 +13,11 @@ class Bot {
     this.health = this.maxHealth;
     this.alive = true;
 
-    this.angry = false;   // fica bravo e persegue após tomar dano
-    this.angerHits = 0;   // conta os socos que tomou antes de atacar
+    this.angry = false; // fica bravo e persegue após tomar dano
+    this.angerHits = 0; // conta os socos que tomou antes de atacar
 
-    this.hitsDealt = 0;   // quantos golpes já deu no jogador
-    this.maxHits = 3;     // limite de golpes causados no jogador
+    this.hitsDealt = 0; // quantos golpes já deu no jogador
+    this.maxHits = 3; // limite de golpes causados no jogador
 
     this.setRandomVelocity();
     this.messageText = null;
@@ -42,14 +42,14 @@ class Bot {
     const vy = this.sprite.body.velocity.y;
 
     if (Math.abs(vx) > Math.abs(vy)) {
-      if (vx > 0) this.playAnimIfNotPlaying('walk_right');
-      else if (vx < 0) this.playAnimIfNotPlaying('walk_left');
-      else this.stopAnimAndSetFrame('right');
+      if (vx > 0) this.playAnimIfNotPlaying("walk_right");
+      else if (vx < 0) this.playAnimIfNotPlaying("walk_left");
+      else this.stopAnimAndSetFrame("right");
     } else if (Math.abs(vy) > 0) {
-      if (vy > 0) this.playAnimIfNotPlaying('walk_down');
-      else if (vy < 0) this.playAnimIfNotPlaying('walk_up');
+      if (vy > 0) this.playAnimIfNotPlaying("walk_down");
+      else if (vy < 0) this.playAnimIfNotPlaying("walk_up");
     } else {
-      this.stopAnimAndSetFrame('down');
+      this.stopAnimAndSetFrame("down");
     }
   }
 
@@ -62,10 +62,10 @@ class Bot {
   stopAnimAndSetFrame(direction) {
     this.sprite.anims.stop();
     const frameKeyMap = {
-      down: 'player_frente1',
-      up: 'player_costas1',
-      left: 'player_esquerda1',
-      right: 'player_direita1'
+      down: "player_frente1",
+      up: "player_costas1",
+      left: "player_esquerda1",
+      right: "player_direita1",
     };
     this.sprite.setTexture(frameKeyMap[direction]);
   }
@@ -90,7 +90,10 @@ class Bot {
       const dist = Math.sqrt(dx * dx + dy * dy) || 1;
       const knockbackPower = 100;
 
-      this.sprite.setVelocity((dx / dist) * knockbackPower, (dy / dist) * knockbackPower);
+      this.sprite.setVelocity(
+        (dx / dist) * knockbackPower,
+        (dy / dist) * knockbackPower
+      );
       this.sprite.setAlpha(0.5);
 
       this.showHealthBar();
@@ -135,10 +138,15 @@ class Bot {
 
     this.healthBar.clear();
     this.healthBar.fillStyle(0x00ff00, 0.4);
-    this.healthBar.fillRect(this.sprite.x - width / 2, this.sprite.y - 55, width * lifeRatio, height);
+    this.healthBar.fillRect(
+      this.sprite.x - width / 2,
+      this.sprite.y - 55,
+      width * lifeRatio,
+      height
+    );
     this.healthBar.setAlpha(1);
 
-    if(this.healthBarTimer) {
+    if (this.healthBarTimer) {
       this.healthBarTimer.remove(false);
     }
 
@@ -148,14 +156,19 @@ class Bot {
   }
 
   updateHealthBarPosition() {
-    if(this.healthBar.alpha > 0){
+    if (this.healthBar.alpha > 0) {
       const width = 30;
       const height = 5;
       const lifeRatio = this.health / this.maxHealth;
 
       this.healthBar.clear();
       this.healthBar.fillStyle(0x00ff00, 0.4);
-      this.healthBar.fillRect(this.sprite.x - width / 2, this.sprite.y - 55, width * lifeRatio, height);
+      this.healthBar.fillRect(
+        this.sprite.x - width / 2,
+        this.sprite.y - 55,
+        width * lifeRatio,
+        height
+      );
     }
   }
 }
@@ -163,7 +176,7 @@ class Bot {
 class Guarda {
   constructor(scene, x, y) {
     this.scene = scene;
-    this.sprite = scene.physics.add.sprite(x, y, 'guarda_direita1');
+    this.sprite = scene.physics.add.sprite(x, y, "guarda_direita1");
     this.sprite.setOrigin(0.5, 1);
     this.sprite.setScale(0.3);
     this.sprite.setCollideWorldBounds(true);
@@ -222,20 +235,18 @@ class Guarda {
     const vy = this.sprite.body.velocity.y;
 
     if (Math.abs(vx) > Math.abs(vy)) {
-      if (vx > 0) this.playAnimIfNotPlaying('guarda_walk_right');
-      else if (vx < 0) this.playAnimIfNotPlaying('guarda_walk_left');
-      else this.stopAnimAndSetFrame('right');
+      if (vx > 0) this.playAnimIfNotPlaying("guarda_walk_right");
+      else if (vx < 0) this.playAnimIfNotPlaying("guarda_walk_left");
+      else this.stopAnimAndSetFrame("right");
     } else if (Math.abs(vy) > 0) {
-      if (vy > 0) this.playAnimIfNotPlaying('guarda_walk_down');
-      else if (vy < 0) this.playAnimIfNotPlaying('guarda_walk_up');
+      if (vy > 0) this.playAnimIfNotPlaying("guarda_walk_down");
+      else if (vy < 0) this.playAnimIfNotPlaying("guarda_walk_up");
     } else {
-      this.stopAnimAndSetFrame('down');
+      this.stopAnimAndSetFrame("down");
     }
   }
 
   update() {
-    
-    
     if (!this.alive) return;
     if (this.isChasing && this.chaseTarget) {
       const speed = 60;
@@ -257,10 +268,10 @@ class Guarda {
     this.sprite.anims.stop();
 
     const frameKeyMap = {
-      down: 'guarda_frente1',
-      up: 'guarda_costas1',
-      left: 'guarda_esquerda1',
-      right: 'guarda_direita1'
+      down: "guarda_frente1",
+      up: "guarda_costas1",
+      left: "guarda_esquerda1",
+      right: "guarda_direita1",
     };
 
     this.sprite.setTexture(frameKeyMap[direction]);
@@ -280,7 +291,7 @@ class Guarda {
       "Tente fugir e verá as consequências.",
       "Não pense que pode me enganar.",
       "Sua hora vai chegar.",
-      "Eu vigio todos os cantos daqui."
+      "Eu vigio todos os cantos daqui.",
     ];
     return Phaser.Utils.Array.GetRandom(phrases);
   }
@@ -297,7 +308,10 @@ class Guarda {
       const dist = Math.sqrt(dx * dx + dy * dy) || 1;
       const knockbackPower = 100;
 
-      this.sprite.setVelocity((dx / dist) * knockbackPower, (dy / dist) * knockbackPower);
+      this.sprite.setVelocity(
+        (dx / dist) * knockbackPower,
+        (dy / dist) * knockbackPower
+      );
       this.sprite.setAlpha(0.5);
 
       this.showHealthBar();
@@ -327,10 +341,15 @@ class Guarda {
 
     this.healthBar.clear();
     this.healthBar.fillStyle(0x00ff00, 0.4);
-    this.healthBar.fillRect(this.sprite.x - width / 2, this.sprite.y - 55, width * lifeRatio, height);
+    this.healthBar.fillRect(
+      this.sprite.x - width / 2,
+      this.sprite.y - 55,
+      width * lifeRatio,
+      height
+    );
     this.healthBar.setAlpha(1);
 
-    if(this.healthBarTimer) {
+    if (this.healthBarTimer) {
       this.healthBarTimer.remove(false);
     }
 
@@ -340,21 +359,26 @@ class Guarda {
   }
 
   updateHealthBarPosition() {
-    if(this.healthBar.alpha > 0){
+    if (this.healthBar.alpha > 0) {
       const width = 30;
       const height = 5;
       const lifeRatio = this.health / this.maxHealth;
 
       this.healthBar.clear();
       this.healthBar.fillStyle(0x00ff00, 0.4);
-      this.healthBar.fillRect(this.sprite.x - width / 2, this.sprite.y - 55, width * lifeRatio, height);
+      this.healthBar.fillRect(
+        this.sprite.x - width / 2,
+        this.sprite.y - 55,
+        width * lifeRatio,
+        height
+      );
     }
   }
 }
 
 class MainScene extends Phaser.Scene {
   constructor() {
-    super('MainScene');
+    super("MainScene");
 
     this.botMessages = [
       "Some daqui!",
@@ -389,7 +413,7 @@ class MainScene extends Phaser.Scene {
       "Fique calmo e espere a hora certa.",
       "O silêncio pode salvar sua vida.",
       "Nunca confie nas promessas dos outros.",
-      "Lembre-se: aqui dentro, o tempo passa devagar."
+      "Lembre-se: aqui dentro, o tempo passa devagar.",
     ];
 
     this.guards = [];
@@ -402,122 +426,109 @@ class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('player_frente1', 'assets/player_frente1.png');
-    this.load.image('player_frente2', 'assets/player_frente2.png');
-    this.load.image('player_frente3', 'assets/player_frente3.png');
-    this.load.image('player_costas1', 'assets/player_costas1.png');
-    this.load.image('player_costas2', 'assets/player_costas2.png');
-    this.load.image('player_costas3', 'assets/player_costas3.png');
-    this.load.image('player_direita1', 'assets/player_direita1.png');
-    this.load.image('player_direita2', 'assets/player_direita2.png');
-    this.load.image('player_direita3', 'assets/player_direita3.png');
-    this.load.image('player_esquerda1', 'assets/player_esquerda1.png');
-    this.load.image('player_esquerda2', 'assets/player_esquerda2.png');
-    this.load.image('player_esquerda3', 'assets/player_esquerda3.png');
+    this.load.image("player_frente1", "assets/player_frente1.png");
+    this.load.image("player_frente2", "assets/player_frente2.png");
+    this.load.image("player_frente3", "assets/player_frente3.png");
+    this.load.image("player_costas1", "assets/player_costas1.png");
+    this.load.image("player_costas2", "assets/player_costas2.png");
+    this.load.image("player_costas3", "assets/player_costas3.png");
+    this.load.image("player_direita1", "assets/player_direita1.png");
+    this.load.image("player_direita2", "assets/player_direita2.png");
+    this.load.image("player_direita3", "assets/player_direita3.png");
+    this.load.image("player_esquerda1", "assets/player_esquerda1.png");
+    this.load.image("player_esquerda2", "assets/player_esquerda2.png");
+    this.load.image("player_esquerda3", "assets/player_esquerda3.png");
 
-    this.load.image('guarda_frente1', 'assets/guarda_frente1.png');
-    this.load.image('guarda_frente2', 'assets/guarda_frente2.png');
-    this.load.image('guarda_costas1', 'assets/guarda_costas1.png');
-    this.load.image('guarda_costas2', 'assets/guarda_costas2.png');
-    this.load.image('guarda_direita1', 'assets/guarda_direita1.png');
-    this.load.image('guarda_direita2', 'assets/guarda_direita2.png');
-    this.load.image('guarda_esquerda1', 'assets/guarda_esquerda1.png');
-    this.load.image('guarda_esquerda2', 'assets/guarda_esquerda2.png');
+    this.load.image("guarda_frente1", "assets/guarda_frente1.png");
+    this.load.image("guarda_frente2", "assets/guarda_frente2.png");
+    this.load.image("guarda_costas1", "assets/guarda_costas1.png");
+    this.load.image("guarda_costas2", "assets/guarda_costas2.png");
+    this.load.image("guarda_direita1", "assets/guarda_direita1.png");
+    this.load.image("guarda_direita2", "assets/guarda_direita2.png");
+    this.load.image("guarda_esquerda1", "assets/guarda_esquerda1.png");
+    this.load.image("guarda_esquerda2", "assets/guarda_esquerda2.png");
 
-    this.load.image('vida', 'assets/vida.png');
+    this.load.image("key", "assets/key.png");
 
+    this.load.image("vida", "assets/vida.png");
 
-    this.load.image('map', 'assets/map.png');
+    this.load.image("map", "assets/map.png");
   }
 
   create() {
-    
     // Adiciona o map.png cobrindo toda a tela
-    this.add.image(0, 0, 'map')
-      .setOrigin(0, 0)                                      // canto superior-esquerdo
+    this.add
+      .image(0, 0, "map")
+      .setOrigin(0, 0) // canto superior-esquerdo
       .setDisplaySize(this.scale.width, this.scale.height); // estica para preencher
 
-      
-
     this.anims.create({
-      key: 'walk_down',
+      key: "walk_down",
       frames: [
-        { key: 'player_frente1' },
-        { key: 'player_frente2' },
-        { key: 'player_frente3' }
+        { key: "player_frente1" },
+        { key: "player_frente2" },
+        { key: "player_frente3" },
       ],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
     this.anims.create({
-      key: 'walk_up',
+      key: "walk_up",
       frames: [
-        { key: 'player_costas1' },
-        { key: 'player_costas2' },
-        { key: 'player_costas3' }
+        { key: "player_costas1" },
+        { key: "player_costas2" },
+        { key: "player_costas3" },
       ],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
     this.anims.create({
-      key: 'walk_left',
+      key: "walk_left",
       frames: [
-        { key: 'player_esquerda1' },
-        { key: 'player_esquerda2' },
-        { key: 'player_esquerda3' }
+        { key: "player_esquerda1" },
+        { key: "player_esquerda2" },
+        { key: "player_esquerda3" },
       ],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
     this.anims.create({
-      key: 'walk_right',
+      key: "walk_right",
       frames: [
-        { key: 'player_direita1' },
-        { key: 'player_direita2' },
-        { key: 'player_direita3' }
+        { key: "player_direita1" },
+        { key: "player_direita2" },
+        { key: "player_direita3" },
       ],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
 
     this.anims.create({
-      key: 'guarda_walk_down',
-      frames: [
-        { key: 'guarda_frente1' },
-        { key: 'guarda_frente2' }
-      ],
+      key: "guarda_walk_down",
+      frames: [{ key: "guarda_frente1" }, { key: "guarda_frente2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
     this.anims.create({
-      key: 'guarda_walk_up',
-      frames: [
-        { key: 'guarda_costas1' },
-        { key: 'guarda_costas2' }
-      ],
+      key: "guarda_walk_up",
+      frames: [{ key: "guarda_costas1" }, { key: "guarda_costas2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
     this.anims.create({
-      key: 'guarda_walk_left',
-      frames: [
-        { key: 'guarda_esquerda1' },
-        { key: 'guarda_esquerda2' }
-      ],
+      key: "guarda_walk_left",
+      frames: [{ key: "guarda_esquerda1" }, { key: "guarda_esquerda2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
     this.anims.create({
-      key: 'guarda_walk_right',
-      frames: [
-        { key: 'guarda_direita1' },
-        { key: 'guarda_direita2' }
-      ],
+      key: "guarda_walk_right",
+      frames: [{ key: "guarda_direita1" }, { key: "guarda_direita2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
 
-    this.player = this.add.sprite(400, 300, 'player_frente1');
+    this.player = this.add.sprite(400, 300, "player_frente1");
     this.physics.add.existing(this.player);
     this.player.body.setCollideWorldBounds(true);
     this.player.setScale(0.5);
@@ -525,13 +536,33 @@ class MainScene extends Phaser.Scene {
     this.player.body.setOffset(15, 9);
 
     this.cameras.main.startFollow(this.player);
-    
+
+    // Cria o sprite da chave em uma posição fixa no mapa
+    this.keyItem = this.physics.add.sprite(200, 300, "key").setScale(0.05);
+
+    // Variável que indica se o jogador tem a chave
+    this.hasKey = false;
+
+    // Configura o overlap entre jogador e chave para coletar
+    this.physics.add.overlap(
+      this.player,
+      this.keyItem,
+      () => {
+        this.hasKey = true;
+        this.keyItem.destroy(); // remove a chave do mapa
+        this.showKeyIndicator(); // mostra o ícone da chave no HUD
+      },
+      null,
+      this
+    );
 
     // Definindo o zoom (2x)
     this.cameras.main.setZoom(2.5);
 
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.spaceKey = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.SPACE
+    );
     this.zKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
     this.bots = [];
@@ -543,7 +574,7 @@ class MainScene extends Phaser.Scene {
     }
 
     this.guards = [];
-    for(let i = 0; i < 7; i++){
+    for (let i = 0; i < 7; i++) {
       let guardX = Phaser.Math.Between(300, 500);
       let guardY = Phaser.Math.Between(300, 500);
       const guard = new Guarda(this, guardX, guardY);
@@ -552,7 +583,10 @@ class MainScene extends Phaser.Scene {
     }
 
     // Adiciona colisão entre o jogador e os bots
-    this.physics.add.collider(this.player, this.bots.map(b => b.sprite));
+    this.physics.add.collider(
+      this.player,
+      this.bots.map((b) => b.sprite)
+    );
 
     // Adiciona colisão entre os bots para evitar sobreposição entre eles
     for (let i = 0; i < this.bots.length; i++) {
@@ -571,8 +605,8 @@ class MainScene extends Phaser.Scene {
     this.livesSprites = [];
     const startX = this.sys.game.config.width - 35;
     const startY = 10;
-    for(let i=0; i<5; i++) {
-      const vidaSprite = this.add.image(startX - i * 30, startY, 'vida');
+    for (let i = 0; i < 5; i++) {
+      const vidaSprite = this.add.image(startX - i * 30, startY, "vida");
       vidaSprite.setOrigin(0, 0);
       vidaSprite.setScale(0.04);
       this.livesSprites.push(vidaSprite);
@@ -581,48 +615,66 @@ class MainScene extends Phaser.Scene {
 
     this.playerInvincible = false;
 
-    this.physics.add.overlap(this.player, this.bots.map(b => b.sprite), this.handlePlayerGuardCollision, null, this);
+    this.physics.add.overlap(
+      this.player,
+      this.bots.map((b) => b.sprite),
+      this.handlePlayerGuardCollision,
+      null,
+      this
+    );
 
     this.time.addEvent({
       delay: 3000,
       loop: true,
       callback: () => {
-        this.bots.forEach(bot => bot.setRandomVelocity());
-      }
+        this.bots.forEach((bot) => bot.setRandomVelocity());
+      },
     });
 
     //BARREIRAS ==========================================================
 
     // Array para guardar as barreiras
-this.walls = [];
+    this.walls = [];
 
-// Cria primeira barreira invisível
-const barrier1 = this.add.rectangle(195, 250, 500, 10);
-this.physics.add.existing(barrier1, true); // corpo estático
-barrier1.setVisible(false);
-this.walls.push(barrier1);
+    // Cria primeira barreira invisível
+    const barrier1 = this.add.rectangle(195, 250, 500, 10);
+    this.physics.add.existing(barrier1, true); // corpo estático
+    barrier1.setVisible(false);
+    this.walls.push(barrier1);
 
-// Cria segunda barreira invisível
-const barrier2 = this.add.rectangle(195, 360, 130, 25);
-this.physics.add.existing(barrier2, true);
-barrier2.setVisible(false);
-this.walls.push(barrier2);
+    // Cria segunda barreira invisível
+    const barrier2 = this.add.rectangle(195, 360, 130, 25);
+    this.physics.add.existing(barrier2, true);
+    barrier2.setVisible(false);
+    this.walls.push(barrier2);
 
-// Cria terceira barreira invisível
-const barrier3 = this.add.rectangle(600, 400, 300, 20);
-this.physics.add.existing(barrier3, true);
-barrier3.setVisible(false);
-this.walls.push(barrier3);
+    // Cria terceira barreira invisível
+    const barrier3 = this.add.rectangle(600, 400, 300, 20);
+    this.physics.add.existing(barrier3, true);
+    barrier3.setVisible(false);
+    this.walls.push(barrier3);
 
-// Adicionar colisões para todas as barreiras:
-this.walls.forEach(barrier => {
-  this.physics.add.collider(this.player, barrier);
-  this.physics.add.collider(this.bots.map(b => b.sprite), barrier);
-  this.physics.add.collider(this.guards.map(g => g.sprite), barrier);
+    // Adicionar colisões para todas as barreiras:
+    this.walls.forEach((barrier) => {
+      this.physics.add.collider(this.player, barrier);
+      this.physics.add.collider(
+        this.bots.map((b) => b.sprite),
+        barrier
+      );
+      this.physics.add.collider(
+        this.guards.map((g) => g.sprite),
+        barrier
+      );
+    });
 
-});
+    //BARREIRAS ==========================================================
+  }
 
-   //BARREIRAS ==========================================================
+  showKeyIndicator() {
+    if (!this.keyIcon) {
+      // Posição (50,50) no canto superior esquerdo, sem movimento com a câmera
+      this.keyIcon = this.add.image(50, 50, "key").setScale(0.07);
+    }
   }
 
   drawLivesBar() {
@@ -636,28 +688,25 @@ this.walls.forEach(barrier => {
     this.livesBar.fillRect(x, y, (this.lives / this.maxLives) * width, height);
     this.livesBar.lineStyle(2, 0x004000);
     this.livesBar.strokeRect(x, y, width, height);
-
-    
   }
 
   updateLivesSprites() {
-    for(let i = 0; i < this.livesSprites.length; i++) {
+    for (let i = 0; i < this.livesSprites.length; i++) {
       this.livesSprites[i].setVisible(i < this.lives / 2);
     }
   }
 
   startChasingAllGuards(player) {
-    this.guards.forEach(guard => {
+    this.guards.forEach((guard) => {
       guard.startChasing(player);
     });
   }
 
   handlePlayerGuardCollision(playerSprite, botSprite) {
-    const bot = this.bots.find(b => b.sprite === botSprite);
-    if(bot instanceof Guarda || (bot instanceof Bot && bot.angry)){
+    const bot = this.bots.find((b) => b.sprite === botSprite);
+    if (bot instanceof Guarda || (bot instanceof Bot && bot.angry)) {
       if (!this.playerInvincible) {
-
-        if(bot instanceof Bot && bot.hitsDealt >= bot.maxHits) {
+        if (bot instanceof Bot && bot.hitsDealt >= bot.maxHits) {
           // Bot já bateu 3x, para de perseguir e volta a andar aleatoriamente
           bot.angry = false;
           bot.chaseTarget = null;
@@ -671,7 +720,7 @@ this.walls.forEach(barrier => {
         this.drawLivesBar();
         this.updateLivesSprites();
 
-        if(bot instanceof Bot) {
+        if (bot instanceof Bot) {
           bot.hitsDealt++;
         }
 
@@ -681,45 +730,48 @@ this.walls.forEach(barrier => {
           this.scene.restart();
         }
 
-        this.time.delayedCall(1500, () => { this.playerInvincible = false; });
+        this.time.delayedCall(1500, () => {
+          this.playerInvincible = false;
+        });
       }
     }
   }
 
   update() {
-    
     const speed = 100;
     this.player.body.setVelocity(0);
 
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
-      if (this.player.anims.currentAnim?.key !== 'walk_left') {
-        this.player.anims.play('walk_left', true);
+      if (this.player.anims.currentAnim?.key !== "walk_left") {
+        this.player.anims.play("walk_left", true);
       }
     } else if (this.cursors.right.isDown) {
       this.player.body.setVelocityX(speed);
-      if (this.player.anims.currentAnim?.key !== 'walk_right') {
-        this.player.anims.play('walk_right', true);
+      if (this.player.anims.currentAnim?.key !== "walk_right") {
+        this.player.anims.play("walk_right", true);
       }
     } else if (this.cursors.up.isDown) {
       this.player.body.setVelocityY(-speed);
-      if (this.player.anims.currentAnim?.key !== 'walk_up') {
-        this.player.anims.play('walk_up', true);
+      if (this.player.anims.currentAnim?.key !== "walk_up") {
+        this.player.anims.play("walk_up", true);
       }
     } else if (this.cursors.down.isDown) {
       this.player.body.setVelocityY(speed);
-      if (this.player.anims.currentAnim?.key !== 'walk_down') {
-        this.player.anims.play('walk_down', true);
+      if (this.player.anims.currentAnim?.key !== "walk_down") {
+        this.player.anims.play("walk_down", true);
       }
     } else {
       this.player.anims.stop();
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
-      this.bots.forEach(bot => {
+      this.bots.forEach((bot) => {
         const dist = Phaser.Math.Distance.Between(
-          this.player.x, this.player.y,
-          bot.sprite.x, bot.sprite.y
+          this.player.x,
+          this.player.y,
+          bot.sprite.x,
+          bot.sprite.y
         );
         if (dist < 50) {
           if (bot instanceof Guarda) {
@@ -733,10 +785,12 @@ this.walls.forEach(barrier => {
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.zKey)) {
-      this.bots.forEach(bot => {
+      this.bots.forEach((bot) => {
         const dist = Phaser.Math.Distance.Between(
-          this.player.x, this.player.y,
-          bot.sprite.x, bot.sprite.y
+          this.player.x,
+          this.player.y,
+          bot.sprite.x,
+          bot.sprite.y
         );
         if (dist < 50) {
           bot.takeDamageFrom(this.player);
@@ -744,7 +798,7 @@ this.walls.forEach(barrier => {
       });
     }
 
-    this.bots.forEach(bot => {
+    this.bots.forEach((bot) => {
       if (bot instanceof Guarda || bot instanceof Bot) {
         bot.update();
         bot.updateAnimation();
@@ -761,13 +815,15 @@ this.walls.forEach(barrier => {
       bot.messageText.destroy();
     }
 
-    bot.messageText = this.add.text(bot.sprite.x, bot.sprite.y - 40, message, {
-      font: '16px Arial',
-      fill: '#fff',
-      backgroundColor: 'rgba(0,0,0,0.7)',
-      padding: { x: 5, y: 3 },
-      align: 'center',
-    }).setOrigin(0.5);
+    bot.messageText = this.add
+      .text(bot.sprite.x, bot.sprite.y - 40, message, {
+        font: "16px Arial",
+        fill: "#fff",
+        backgroundColor: "rgba(0,0,0,0.7)",
+        padding: { x: 5, y: 3 },
+        align: "center",
+      })
+      .setOrigin(0.5);
 
     this.time.delayedCall(2000, () => {
       if (bot.messageText) {
@@ -777,5 +833,3 @@ this.walls.forEach(barrier => {
     });
   }
 }
-
-
