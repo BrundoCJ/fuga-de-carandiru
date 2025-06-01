@@ -69,11 +69,14 @@ class MenuScene extends Phaser.Scene {
           video.setDepth(1000);
         });
 
-        video.play(true);
+        video.play(false);
 
         // Ação ao finalizar o vídeo
+        
         video.once('complete', () => {
-          console.log("Vídeo finalizado");
+          video.destroy(); // Remove o vídeo da tela
+    
+          this.scene.start('game')
         });
       });
     });
