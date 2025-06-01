@@ -636,23 +636,45 @@ class MainScene extends Phaser.Scene {
     // Array para guardar as barreiras
     this.walls = [];
 
-    // Cria primeira barreira invisível
-    const barrier1 = this.add.rectangle(195, 250, 500, 10);
-    this.physics.add.existing(barrier1, true); // corpo estático
-    barrier1.setVisible(false);
-    this.walls.push(barrier1);
+// Barreira 1 (meio do mapa)
+const barrier1 = this.add.rectangle(210, 160, 420, 50);
+this.physics.add.existing(barrier1, true);
+barrier1.setVisible(false);
+this.walls.push(barrier1);
 
-    // Cria segunda barreira invisível
-    const barrier2 = this.add.rectangle(195, 360, 130, 25);
-    this.physics.add.existing(barrier2, true);
-    barrier2.setVisible(false);
-    this.walls.push(barrier2);
+// === Barrier 2 (borda superior do mapa) ===
+// Cobre toda a largura do mapa, posicionada no topo
+const barrier2 = this.add.rectangle(1024, 24, 2048, 56);
+this.physics.add.existing(barrier2, true);   // corpo estático
+barrier2.setVisible(false);
+this.walls.push(barrier2);
 
-    // Cria terceira barreira invisível
-    const barrier3 = this.add.rectangle(600, 400, 300, 20);
-    this.physics.add.existing(barrier3, true);
-    barrier3.setVisible(false);
-    this.walls.push(barrier3);
+
+// === Barrier 3 (borda inferior do mapa) ===
+// Cobre toda a largura do mapa, posicionada embaixo
+const barrier3 = this.add.rectangle(1024, 800, 2200, 48);
+this.physics.add.existing(barrier3, true);
+barrier3.setVisible(false);
+this.walls.push(barrier3);
+
+
+// === Barrier 4 (borda esquerda do mapa) ===
+// Cobre toda a altura do mapa, posicionada à esquerda
+const barrier4 = this.add.rectangle(10, 684, 14, 1370);
+this.physics.add.existing(barrier4, true);
+barrier4.setVisible(false);
+this.walls.push(barrier4);
+
+
+// === Barrier 5 (borda direita do mapa) ===
+// Cobre toda a altura do mapa, posicionada à direita
+const barrier5 = this.add.rectangle(1420, 684, 29, 1367);
+this.physics.add.existing(barrier5, true);
+barrier5.setVisible(false);
+this.walls.push(barrier5);
+
+
+
 
     // Adicionar colisões para todas as barreiras:
     this.walls.forEach((barrier) => {
