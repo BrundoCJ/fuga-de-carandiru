@@ -1,124 +1,93 @@
 class MenuScene extends Phaser.Scene {
   constructor() {
-    super("MenuScene");
+    super('MenuScene');
   }
 
   preload() {
-    this.load.image("background", "assets/background.png");
-    this.load.image("title", "assets/title.png");
-    this.load.image("start", "assets/start.png");
-    this.load.image("mapBg", "assets/map.png");
+    // Carregando todas as imagens e o vídeo necessários
+    this.load.image('background', 'assets/background.png');
+    this.load.image('title', 'assets/title.png');
+    this.load.image('start', 'assets/start.png');
+    this.load.image('gameBackground', 'assets/gameBackground.png');
+    this.load.image('newGame', 'assets/new_game.png');
+    this.load.video('intro', 'assets/videoNewGame.mp4');
   }
 
   create() {
-    this.bg = this.add.image(
-      this.cameras.main.centerX,
-      this.cameras.main.centerY,
-      "background"
-    );
-    this.bg.setDisplaySize(this.cameras.main.width, this.cameras.main.height);
+    const { width, height } = this.scale;
 
-    this.title = this.add
-      .image(this.cameras.main.centerX, 150, "title")
-      .setScale(0.5);
-    this.titleOriginalY = this.title.y;
+    // Tela de fundo inicial
+    const bg = this.add.image(0, 0, 'background').setOrigin(0).setDisplaySize(width, height);
 
-    this.start = this.add
-      .image(this.cameras.main.centerX, 300, "start")
-      .setScale(0.25);
-    this.startOriginalY = this.start.y;
+    // Título do jogo
+    const title = this.add.image(width / 2, 300, 'title').setScale(0.8);
 
-    this.start.setInteractive({ cursor: "pointer" });
+    // Botão START
+    const start = this.add.image(width / 2, 550, 'start').setScale(0.4);
 
-    this.start.on("pointerdown", () => {
-      this.scene.start("LevelOneScene");
+    // Animação flutuante para título e botão START
+    this.tweens.add({
+      targets: [title, start],
+      y: '+=10',
+      duration: 1500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
     });
 
-    this.scale.on("resize", this.resize, this);
-  }
+    // Quando o botão START for clicado
+    start.setInteractive({ cursor: 'pointer' });
+    start.on('pointerdown', () => {
+      title.setVisible(false);
+      start.setVisible(false);
+      bg.setVisible(false);
 
-  update(time, delta) {
-    const amplitude = 10;
-    const speed = 0.002;
+      // Mostra a nova tela com o botão NEW GAME
+      const gameBg = this.add.image(0, 0, 'gameBackground').setOrigin(0).setDisplaySize(width, height);
+      const newGameBtn = this.add.image(width / 2,480, 'newGame').setScale(0.6).setInteractive({ cursor: 'pointer' });
 
-    this.title.y = this.titleOriginalY + Math.sin(time * speed) * amplitude;
-    this.start.y = this.startOriginalY + Math.sin(time * speed) * amplitude;
-  }
+      // Aplica a mesma animação flutuante no botão NEW GAME
+      this.tweens.add({
+        targets: newGameBtn,
+        y: '+=10',
+        duration: 1500,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
 
-  resize(gameSize) {
-    const width = gameSize.width;
-    const height = gameSize.height;
+      // Quando o botão NEW GAME for clicado
+      newGameBtn.on('pointerdown', () => {
+        gameBg.setVisible(false);
+        newGameBtn.setVisible(false);
 
-    this.cameras.resize(width, height);
-    this.bg.setPosition(width / 2, height / 2).setDisplaySize(width, height);
-    this.title.setPosition(width / 2, 150);
-    this.start.setPosition(width / 2, 300);
+        // Adiciona e reproduz o vídeo
+        const video = this.add.video(width / 2, height / 2, 'intro');
+
+        video.once('play', () => {
+          video.setDisplaySize(width, height);
+          video.setDepth(1000);
+        });
+
+        video.play(true);
+
+        // Ação ao finalizar o vídeo
+        video.once('complete', () => {
+          console.log("Vídeo finalizado");
+        });
+      });
+    });
   }
 }
 
-class LevelOneScene extends Phaser.Scene {
-  constructor() {
-    super("LevelOneScene");
-  }
-
-  preload() {
-    this.load.image("newGameImage", "assets/new_game.png");
-    this.load.image("gameBackground", "assets/gameBackground.png");
-  }
-
-  create() {
-    this.bg = this.add.image(
-      this.cameras.main.centerX,
-      this.cameras.main.centerY,
-      "gameBackground"
-    );
-    this.bg.setDisplaySize(this.cameras.main.width, this.cameras.main.height);
-
-    this.newGame = this.add
-      .image(
-        this.cameras.main.centerX,
-        this.cameras.main.centerY,
-        "newGameImage"
-      )
-      .setOrigin(0.5)
-      .setScale(0.5)
-      .setInteractive({ cursor: "pointer" });
-
-    this.newGameOriginalY = this.newGame.y;
-
-    this.newGame.on("pointerdown", () => {
-      this.scene.start("MainScene");
-    });
-
-    this.scale.on("resize", this.resize, this);
-  }
-
-  update(time, delta) {
-    const amplitude = 10;
-    const speed = 0.002;
-    this.newGame.y = this.newGameOriginalY + Math.sin(time * speed) * amplitude;
-  }
-
-  resize(gameSize) {
-    const width = gameSize.width;
-    const height = gameSize.height;
-    this.cameras.resize(width, height);
-    this.bg.setPosition(width / 2, height / 2).setDisplaySize(width, height);
-    this.newGame.setPosition(width / 2, height / 2);
-  }
-}
-
+// Configuração do jogo
 const config = {
   type: Phaser.AUTO,
-  width: window.innerWidth,
-  height: window.innerHeight,
-  parent: "game-container",
-  physics: { default: "arcade", arcade: { debug: true } }, // Adicionar physics do game.js
-  scene: [MenuScene, LevelOneScene, MainScene], // Adicionar MainScene aqui
-  scale: {
-    mode: Phaser.Scale.RESIZE,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-  },
+  width: 2048,
+  height: 1153,
+  scene: [MenuScene],
+  parent: 'game-container'
 };
 
-const game = new Phaser.Game(config);
+// Inicializa o jogo
+new Phaser.Game(config);

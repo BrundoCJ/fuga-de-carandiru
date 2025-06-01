@@ -1,267 +1,29 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Carandiru Escape</title>
-    <link rel="icon" type="image/png" href="assets/player_frente1.png" />
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      /* Seu CSS base para body e container Phaser */
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-        background-color: #111;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        user-select: none;
-      }
-
-      #game-container {
-        width: 100%;
-        height: 100%;
-        display: block;
-      }
-
-      /* Overlay que cobre a tela com fundo escuro semi-transparente */
-      #name-input-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.75);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 10000;
-        user-select: none;
-        font-family: "Press Start 2P", cursive, monospace;
-        display: none; /* inicialmente escondido */
-      }
-
-      /* Janela do input com borda pixelada verde neon */
-      #name-window {
-        background: #000;
-        padding: 20px 30px;
-        border: 6px solid #00ff00;
-        box-shadow: 0 0 5px #00ff00, inset 0 0 10px #00ff00;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 360px;
-        gap: 20px;
-      }
-
-      /* Texto do prompt */
-      #name-prompt {
-        font-size: 14px;
-        color: #00ff00;
-        text-align: center;
-        text-shadow: 0 0 5px #004400;
-      }
-
-      /* Input texto estilo pixel, sem borda, fundo preto, texto verde neon */
-      #name-text {
-        width: 100%;
-        font-size: 20px;
-        color: #00ff00;
-        background-color: #000;
-        border: 3px solid #00ff00;
-        padding: 8px 10px;
-        outline: none;
-        letter-spacing: 8px;
-        text-transform: uppercase;
-        text-shadow: 0 0 8px #00ff00;
-        box-sizing: border-box;
-        caret-color: #00ff00;
-        font-family: "Press Start 2P", cursive, monospace;
-        border-right: 3px solid #00ff00;
-        animation: blinkCaret 1s step-start infinite;
-      }
-
-      /* Grid de letras */
-      #letter-grid {
-        display: grid;
-        grid-template-columns: repeat(8, 1fr);
-        gap: 8px;
-        width: 100%;
-      }
-
-      /* Cada letra ou botão no grid */
-      .letter-button {
-        background: #000;
-        border: 3px solid #00ff00;
-        color: #00ff00;
-        font-size: 18px;
-        text-align: center;
-        padding: 10px 0;
-        cursor: pointer;
-        user-select: none;
-        box-shadow: 0 0 5px #00ff00, inset 0 0 8px #00ff00;
-        transition: background-color 0.15s ease;
-        font-family: "Press Start 2P", cursive, monospace;
-        text-transform: uppercase;
-        border-radius: 0;
-      }
-
-      /* Hover efeito */
-      .letter-button:hover,
-      .letter-button:focus {
-        background-color: #00ff00;
-        color: #000;
-        outline: none;
-      }
-
-      /* Container dos botões lado a lado */
-      #btn-container {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        gap: 10px;
-      }
-
-      #btn-back,
-      #btn-ok {
-        flex: 1;
-        padding: 10px 0;
-        font-size: 18px;
-        border-radius: 0;
-        border: 3px solid #00ff00;
-        background: #000;
-        color: #00ff00;
-        cursor: pointer;
-        box-shadow: 0 0 5px #00ff00, inset 0 0 8px #00ff00;
-        transition: background-color 0.15s ease;
-        font-family: "Press Start 2P", cursive, monospace;
-      }
-
-      #btn-back:hover,
-      #btn-ok:hover {
-        background-color: #00ff00;
-        color: #000;
-        outline: none;
-      }
-
-      /* Cursor piscando do input */
-      @keyframes blinkCaret {
-        0%,
-        50% {
-          border-color: #00ff00;
-        }
-        51%,
-        100% {
-          border-color: transparent;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="game-container"></div>
-
-    <div id="info">
-      Use as setas para se movimentar e pressione Espaço para interagir.
-    </div>
-
-    <!-- Overlay input de nome -->
-    <div id="name-input-overlay">
-      <div id="name-window">
-        <div id="name-prompt">Digite o nome do seu personagem</div>
-        <input
-          type="text"
-          id="name-text"
-          maxlength="7"
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="characters"
-          spellcheck="false"
-        />
-        <div id="letter-grid"></div>
-        <div id="btn-container">
-          <button id="btn-back">BACK</button>
-          <button id="btn-ok">OK</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Phaser 3 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
-
-    <!-- <script>
-    // Letras para o grid
-    const letters = [
-      'A','B','C','D','E','F','.','\,',
-      'G','H','I','J','K','L',' ','-',
-      'M','N','O','P','Q','R','S','T',
-      'U','V','W','X','Y','Z'
-    ];
-
-    // Elementos HTML
-    const overlay = document.getElementById('name-input-overlay');
-    const nameInput = document.getElementById('name-text');
-    const letterGrid = document.getElementById('letter-grid');
-    const btnBack = document.getElementById('btn-back');
-    const btnOk = document.getElementById('btn-ok');
-
-    // Função para atualizar o texto com letra adicionada
-    function addLetter(letter) {
-      if(nameInput.value.length < nameInput.maxLength) {
-        nameInput.value += letter;
-        nameInput.focus();
-      }
+<head>
+  <meta charset="UTF-8" />
+  <title>Menu Phaser</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background-color: #111;
+      user-select: none;
     }
-
-    // Função para apagar última letra
-    function backspace() {
-      nameInput.value = nameInput.value.slice(0, -1);
-      nameInput.focus();
+    #game-container {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
-
-    // Criar botões das letras no grid
-    letters.forEach(letter => {
-      const btn = document.createElement('button');
-      btn.classList.add('letter-button');
-      btn.textContent = letter;
-      btn.type = 'button';
-      btn.addEventListener('click', () => addLetter(letter));
-      letterGrid.appendChild(btn);
-    });
-
-    // Eventos dos botões
-    btnBack.addEventListener('click', () => backspace());
-    btnOk.addEventListener('click', () => {
-      if(nameInput.value.trim().length === 0) {
-        alert('Digite um nome válido!');
-        return;
-      }
-      // Aqui você pode enviar o nome para o Phaser e fechar o overlay
-      alert('Nome salvo: ' + nameInput.value.toUpperCase());
-      overlay.style.display = 'none';
-
-      // Por exemplo, você pode emitir um evento ou chamar função global para Phaser continuar
-      // window.dispatchEvent(new CustomEvent('nameConfirmed', { detail: nameInput.value.toUpperCase() }));
-    });
-
-    // Exemplo: função para mostrar o overlay (chame isso do Phaser quando quiser abrir o input)
-    function showNameInput() {
-      overlay.style.display = 'flex';
-      nameInput.value = '';
-      nameInput.focus();
-    }
-
-    // Se quiser testar, abra o input após 1s só para demo
-    // setTimeout(showNameInput, 1000);
-
-    // --- Integração com Phaser: você pode chamar showNameInput() do seu código Phaser
-  </script> -->
-
-    <script src="game.js"></script>
-    <script src="menu.js"></script>
-  </body>
+  </style>
+</head>
+<body>
+  <div id="game-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+  <script src="menu.js"></script>
+</body>
 </html>
