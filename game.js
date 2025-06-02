@@ -453,6 +453,8 @@ class MainScene extends Phaser.Scene {
     this.load.image("vida", "assets/vida.png");
 
     this.load.image("map", "assets/map.png");
+
+    this.load.image('heart', 'assets/heart_sprite.png');
   }
 
   create() {
@@ -550,23 +552,77 @@ class MainScene extends Phaser.Scene {
       () => {
         this.hasKey = true;
         this.keyItem.destroy(); // remove a chave do mapa
-        this.showKeyIndicator(); // mostra o ícone da chave no HUD
+        this.showKeyIndicator = this.add.image(70, 65, "key").setScale(0.07).setScrollFactor(0); // mostra o ícone da chave no HUD
       },
       null,
       this
     );
 
+    this.lives = 5;
+    this.maxLives = 5;
+
+    // Criar corações como HUD
+    this.hearts = [];
+
+    // 2) Posição de base (X e Y da chave (ACHO QUE É DO CORAÇÃO)):
+    const keyX = 50;
+    const keyY = 50;
+
+    // 3) Cálculo das dimensões do sprite do coração já escalado:
+    //    - o sprite (origem: 64×64) em setScale(0.5) vira 32×32 na tela.
+    const heartWidth = 32;  // 64px * 0.5
+    const heartHeight = 32; // 64px * 0.5
+
+    // 4) Queremos que eles fiquem “5px acima” do topo da chave
+    const spacingBetweenHearts = 2; // em px
+    const heartsBaseY = keyY - heartHeight - 5; // 50 - 32 - 5 = 13
+
+    // 5) Agora criamos tantos corações quanto maxLives, alinhados em linha a partir de keyX:
+    for (let i = 0; i < this.maxLives; i++) {
+      // cada coração desloca em X de “heartWidth + spacing” para o lado direito
+      const x = keyX + i * (heartWidth + spacingBetweenHearts);
+      const y = heartsBaseY;
+
+      const heartIcon = this.add
+        .image(x, y, 'heart')
+        .setOrigin(0, 0)
+        .setScale(0.5)
+        .setScrollFactor(0); // fixa na câmera
+
+      this.hearts.push(heartIcon);
+    }
+    // Ajustar visibilidade inicial
+    this.updateHearts();
+
+
     // Definindo o zoom (2x)
     this.cameras.main.setZoom(1.0); //ALTERAR PARA 2.0 OU 2.5 DEPOIS (ALTEREI PARA FAZER AS BARREIRAS)
 
+    +  // (2) Sempre que a câmera mudar de zoom, reduzimos a escala do HUD em 1/zoom:
+      this.cameras.main.on('zoom', (camera, zoom) => {
+        // cada coração tinha scale-base = 0.5
+        this.hearts.forEach(h => {
+          h.setScale(0.5 / zoom);
+        });
+        // o ícone da chave tinha scale-base = 0.07
+        if (this.keyIcon) {
+          this.keyIcon.setScale(0.07 / zoom);
+        }
+      });
+    // ── FIM DO TRECHO ADICIONADO ──
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spaceKey = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.SPACE
     );
+     this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+     this.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+     this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+     this.dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);  
+
     this.zKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
     this.bots = [];
-    for (let i = 0; i < 0; i++) { //ALTERAR QUANTIDADE DE BOTS (TIREI PRA FAZER AS BARREIRAS)
+    for (let i = 0; i < 2; i++) { //ALTERAR QUANTIDADE DE BOTS (TIREI PRA FAZER AS BARREIRAS)
       const x = Phaser.Math.Between(50, 750);
       const y = Phaser.Math.Between(50, 550);
       const bot = new Bot(this, x, y);
@@ -574,7 +630,7 @@ class MainScene extends Phaser.Scene {
     }
 
     this.guards = [];
-    for (let i = 0; i < 0; i++) { //ALTERAR QUANTIDADE DE GUARDAS (TIREI PRA FAZER AS BARREIRAS)
+    for (let i = 0; i < 3; i++) { //ALTERAR QUANTIDADE DE GUARDAS (TIREI PRA FAZER AS BARREIRAS)
       let guardX = Phaser.Math.Between(300, 500);
       let guardY = Phaser.Math.Between(300, 500);
       const guard = new Guarda(this, guardX, guardY);
@@ -594,26 +650,6 @@ class MainScene extends Phaser.Scene {
         this.physics.add.collider(this.bots[i].sprite, this.bots[j].sprite);
       }
     }
-
-    // Barra verde de vida do jogador (10 vidas)
-    this.lives = 10;
-    this.maxLives = 10;
-    this.livesBar = this.add.graphics();
-    this.drawLivesBar();
-
-    // Algema (vidas) no canto superior direito (5 vidas)
-    this.livesSprites = [];
-    const startX = this.sys.game.config.width - 35;
-    const startY = 10;
-    for (let i = 0; i < 5; i++) {
-      const vidaSprite = this.add.image(startX - i * 30, startY, "vida");
-      vidaSprite.setOrigin(0, 0);
-      vidaSprite.setScale(0.04);
-      this.livesSprites.push(vidaSprite);
-    }
-    this.updateLivesSprites();
-
-    this.playerInvincible = false;
 
     this.physics.add.overlap(
       this.player,
@@ -772,26 +808,7 @@ this.walls.push(barrier22);
   showKeyIndicator() {
     if (!this.keyIcon) {
       // Posição (50,50) no canto superior esquerdo, sem movimento com a câmera
-      this.keyIcon = this.add.image(50, 50, "key").setScale(0.07);
-    }
-  }
-
-  drawLivesBar() {
-    const width = 150;
-    const height = 10;
-    const x = 10;
-    const y = 10;
-
-    this.livesBar.clear();
-    this.livesBar.fillStyle(0x008000, 1);
-    this.livesBar.fillRect(x, y, (this.lives / this.maxLives) * width, height);
-    this.livesBar.lineStyle(2, 0x004000);
-    this.livesBar.strokeRect(x, y, width, height);
-  }
-
-  updateLivesSprites() {
-    for (let i = 0; i < this.livesSprites.length; i++) {
-      this.livesSprites[i].setVisible(i < this.lives / 2);
+      this.keyIcon = this.add.image(50, 50, "key").setOrigin(0, 0).setScale(0.07).setScrollFactor(0);
     }
   }
 
@@ -815,9 +832,9 @@ this.walls.push(barrier22);
 
         this.playerInvincible = true;
 
-        this.lives--;
-        this.drawLivesBar();
-        this.updateLivesSprites();
+        this.lives -= 1; //linha add
+        this.updateHearts(); //linha add2
+
 
         if (bot instanceof Bot) {
           bot.hitsDealt++;
@@ -836,33 +853,43 @@ this.walls.push(barrier22);
     }
   }
 
+  // Método para atualizar quais corações aparecem
+  updateHearts() {
+    for (let i = 0; i < this.hearts.length; i++) {
+      this.hearts[i].setVisible(i < this.lives);
+    }
+  }
+
   update() {
     const speed = 200; //ALTERAR PARA 100 (MUDEI P FZR AS BARREIRAS)
     this.player.body.setVelocity(0);
 
-    if (this.cursors.left.isDown) {
-      this.player.body.setVelocityX(-speed);
-      if (this.player.anims.currentAnim?.key !== "walk_left") {
-        this.player.anims.play("walk_left", true);
-      }
-    } else if (this.cursors.right.isDown) {
-      this.player.body.setVelocityX(speed);
-      if (this.player.anims.currentAnim?.key !== "walk_right") {
-        this.player.anims.play("walk_right", true);
-      }
-    } else if (this.cursors.up.isDown) {
-      this.player.body.setVelocityY(-speed);
-      if (this.player.anims.currentAnim?.key !== "walk_up") {
-        this.player.anims.play("walk_up", true);
-      }
-    } else if (this.cursors.down.isDown) {
-      this.player.body.setVelocityY(speed);
-      if (this.player.anims.currentAnim?.key !== "walk_down") {
-        this.player.anims.play("walk_down", true);
-      }
-    } else {
-      this.player.anims.stop();
-    }
+    // ── MOVIMENTAÇÃO: setas OU WASD ──
+if (this.cursors.left.isDown || this.aKey.isDown) {
+  this.player.body.setVelocityX(-speed);
+  if (this.player.anims.currentAnim?.key !== "walk_left") {
+    this.player.anims.play("walk_left", true);
+  }
+} else if (this.cursors.right.isDown || this.dKey.isDown) {
+  this.player.body.setVelocityX(speed);
+  if (this.player.anims.currentAnim?.key !== "walk_right") {
+    this.player.anims.play("walk_right", true);
+  }
+} else if (this.cursors.up.isDown || this.wKey.isDown) {
+  this.player.body.setVelocityY(-speed);
+  if (this.player.anims.currentAnim?.key !== "walk_up") {
+    this.player.anims.play("walk_up", true);
+  }
+} else if (this.cursors.down.isDown || this.sKey.isDown) {
+  this.player.body.setVelocityY(speed);
+  if (this.player.anims.currentAnim?.key !== "walk_down") {
+    this.player.anims.play("walk_down", true);
+  }
+} else {
+  this.player.anims.stop();
+}
+// ── FIM MOVIMENTAÇÃO ──
+
 
     if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
       this.bots.forEach((bot) => {
