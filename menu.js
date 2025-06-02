@@ -113,8 +113,8 @@ const config = {
     // Estas propriedades `width` e `height` aqui são redundantes se já definidas acima,
     // mas podem ser úteis para clareza ou se você quiser uma base diferente para a escala.
     // Manter as mesmas da configuração principal é geralmente o ideal.
-    width: 2048,
-    height: 1153
+    width: 1920,
+    height: 1080
   },
 
   // Configuração da física (Arcade Physics é leve e bom para a maioria dos jogos 2D)
@@ -122,7 +122,7 @@ const config = {
     default: 'arcade',
     arcade: {
       gravity: { y: 0 }, // Jogo top-down, sem gravidade vertical
-      debug: true // Defina como true para ver os corpos de colisão e debug de física
+      debug: false // Defina como true para ver os corpos de colisão e debug de física
     }
   },
 

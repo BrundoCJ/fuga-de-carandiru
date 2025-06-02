@@ -557,7 +557,7 @@ class MainScene extends Phaser.Scene {
     );
 
     // Definindo o zoom (2x)
-    this.cameras.main.setZoom(2.5); //ALTERAR PARA 2.0 OU 2.5 DEPOIS (ALTEREI PARA FAZER AS BARREIRAS)
+    this.cameras.main.setZoom(1.0); //ALTERAR PARA 2.0 OU 2.5 DEPOIS (ALTEREI PARA FAZER AS BARREIRAS)
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spaceKey = this.input.keyboard.addKey(
@@ -637,20 +637,21 @@ class MainScene extends Phaser.Scene {
     this.walls = [];
 
 //PARA FAZER AS BARREIRAAS: (EIXO X, EIXO Y, LARGURA, ALTURA)
-// Barreira 1 (meio do mapa)
-const barrier1 = this.add.rectangle(210, 160, 420, 50);
+//TAMAMHO PADRÃO DO MAPA: 1920X1080
+
+const barrier1 = this.add.rectangle(270, 210, 570, 65);
 this.physics.add.existing(barrier1, true);
 barrier1.setVisible(false);
 this.walls.push(barrier1);
 
 //BORDA SUPERIOR
-const barrier2 = this.add.rectangle(1024, 24, 2048, 56);
+const barrier2 = this.add.rectangle(1024, 40, 2048, 75);
 this.physics.add.existing(barrier2, true);   // corpo estático
 barrier2.setVisible(false);
 this.walls.push(barrier2);
 
 //BORDA INFERIOR
-const barrier3 = this.add.rectangle(1024, 800, 2200, 48);
+const barrier3 = this.add.rectangle(1024, 1080, 2200, 90);
 this.physics.add.existing(barrier3, true);
 barrier3.setVisible(false);
 this.walls.push(barrier3);
@@ -662,100 +663,95 @@ barrier4.setVisible(false);
 this.walls.push(barrier4);
 
 //BORDA DIREITA
-const barrier5 = this.add.rectangle(1430, 724, 29, 1367);
+const barrier5 = this.add.rectangle(1920, 724, 70, 1367);
 this.physics.add.existing(barrier5, true);
 barrier5.setVisible(false);
 this.walls.push(barrier5);
 
-const barrier6 = this.add.rectangle(210, 325, 530, 56);
+const barrier6 = this.add.rectangle(333, 430, 670, 65);
 this.physics.add.existing(barrier6, true);
-barrier1.setVisible(false);
+barrier5.setVisible(false);
 this.walls.push(barrier6);
 
-const barrier7 = this.add.rectangle(485, 325, 30, 56);
+const barrier7 = this.add.rectangle(900, 430, 230, 65);
 this.physics.add.existing(barrier7, true);
-barrier1.setVisible(false);
+barrier5.setVisible(false);
 this.walls.push(barrier7);
 
-const barrier8 = this.add.rectangle(635, 650, 10, 456);
+const barrier8 = this.add.rectangle(1360, 430, 470, 65);
 this.physics.add.existing(barrier8, true);
-barrier1.setVisible(false);
+barrier5.setVisible(false);
 this.walls.push(barrier8);
 
-const barrier9 = this.add.rectangle(685, 577, 10, 310);
+const barrier9 = this.add.rectangle(740, 600, 220, 65);
 this.physics.add.existing(barrier9, true);
-barrier1.setVisible(false);
+barrier5.setVisible(false);
 this.walls.push(barrier9);
 
-const barrier10 = this.add.rectangle(655, 200, 35, 290);
+const barrier10 = this.add.rectangle(850, 819, 14, 500);
 this.physics.add.existing(barrier10, true);
-barrier1.setVisible(false);
+barrier4.setVisible(false);
 this.walls.push(barrier10);
 
-const barrier11 = this.add.rectangle(675, 325, 170, 50);
+const barrier11 = this.add.rectangle(910, 770, 16, 410);
 this.physics.add.existing(barrier11, true);
-barrier1.setVisible(false);
+barrier4.setVisible(false);
 this.walls.push(barrier11);
 
-const barrier12 = this.add.rectangle(1025, 325, 350, 50);
+const barrier12 = this.add.rectangle(1255, 770, 28, 410);
 this.physics.add.existing(barrier12, true);
-barrier1.setVisible(false);
+barrier4.setVisible(false);
 this.walls.push(barrier12);
 
-const barrier13 = this.add.rectangle(1025, 325, 350, 50);
+const barrier13 = this.add.rectangle(1578, 770, 30, 410);
 this.physics.add.existing(barrier13, true);
-barrier1.setVisible(false);
+barrier4.setVisible(false);
 this.walls.push(barrier13);
 
-const barrier14 = this.add.rectangle(940, 579, 25, 310);
+const barrier14 = this.add.rectangle(1040, 600, 270, 65);
 this.physics.add.existing(barrier14, true);
-barrier1.setVisible(false);
+barrier5.setVisible(false);
 this.walls.push(barrier14);
 
-const barrier15 = this.add.rectangle(1180, 579, 30, 310);
+const barrier15 = this.add.rectangle(1420, 600, 300, 65);
 this.physics.add.existing(barrier15, true);
-barrier1.setVisible(false);
+barrier5.setVisible(false);
 this.walls.push(barrier15);
 
-const barrier16 = this.add.rectangle(785, 450, 200, 52);
+const barrier16 = this.add.rectangle(1578, 200, 33, 410);
 this.physics.add.existing(barrier16, true);
-barrier1.setVisible(false);
+barrier4.setVisible(false);
 this.walls.push(barrier16);
 
-const barrier17 = this.add.rectangle(1050, 450, 230, 52);
+const barrier17 = this.add.rectangle(878, 200, 40, 410);
 this.physics.add.existing(barrier17, true);
-barrier1.setVisible(false);
+barrier4.setVisible(false);
 this.walls.push(barrier17);
 
-const barrier18 = this.add.rectangle(1180, 189, 30, 310);
+const barrier18 = this.add.rectangle(1250, 943, 240, 65);
 this.physics.add.existing(barrier18, true);
-barrier1.setVisible(false);
+barrier4.setVisible(false);
 this.walls.push(barrier18);
 
-const barrier19 = this.add.rectangle(1060, 160, 260, 50);
+const barrier19 = this.add.rectangle(970, 943, 135, 65);
 this.physics.add.existing(barrier19, true);
-barrier1.setVisible(false);
+barrier4.setVisible(false);
 this.walls.push(barrier19);
 
-const barrier20 = this.add.rectangle(550, 450, 155, 56);
+const barrier20 = this.add.rectangle(1527, 943, 135, 65);
 this.physics.add.existing(barrier20, true);
-barrier1.setVisible(false);
+barrier4.setVisible(false);
 this.walls.push(barrier20);
 
-const barrier21 = this.add.rectangle(730, 710, 100, 56);
+const barrier21 = this.add.rectangle(1400, 213, 335, 65);
 this.physics.add.existing(barrier21, true);
-barrier1.setVisible(false);
+barrier4.setVisible(false);
 this.walls.push(barrier21);
 
-const barrier22 = this.add.rectangle(940, 710, 175, 56);
+const barrier22 = this.add.rectangle(700, 205, 110, 90); //MESA
 this.physics.add.existing(barrier22, true);
-barrier1.setVisible(false);
+barrier4.setVisible(false);
 this.walls.push(barrier22);
-
-const barrier23 = this.add.rectangle(1146, 710, 100, 56);
-this.physics.add.existing(barrier23, true);
-barrier1.setVisible(false);
-this.walls.push(barrier23);
 
     // Adicionar colisões para todas as barreiras:
     this.walls.forEach((barrier) => {
@@ -841,7 +837,7 @@ this.walls.push(barrier23);
   }
 
   update() {
-    const speed = 100;
+    const speed = 200; //ALTERAR PARA 100 (MUDEI P FZR AS BARREIRAS)
     this.player.body.setVelocity(0);
 
     if (this.cursors.left.isDown) {
