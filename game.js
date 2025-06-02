@@ -557,7 +557,7 @@ class MainScene extends Phaser.Scene {
     );
 
     // Definindo o zoom (2x)
-    this.cameras.main.setZoom(1.0); //ALTERAR PARA 2.0 OU 2.5 DEPOIS (ALTEREI PARA FAZER AS BARREIRAS)
+    this.cameras.main.setZoom(2.5); //ALTERAR PARA 2.0 OU 2.5 DEPOIS (ALTEREI PARA FAZER AS BARREIRAS)
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spaceKey = this.input.keyboard.addKey(
