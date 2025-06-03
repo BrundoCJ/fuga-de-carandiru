@@ -627,7 +627,7 @@ class MainScene extends Phaser.Scene {
     this.zKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
     this.bots = [];
-    for (let i = 0; i < 2; i++) { //ALTERAR QUANTIDADE DE BOTS (TIREI PRA FAZER AS BARREIRAS)
+    for (let i = 0; i < 3; i++) { //ALTERAR QUANTIDADE DE BOTS (TIREI PRA FAZER AS BARREIRAS)
       const x = Phaser.Math.Between(50, 750);
       const y = Phaser.Math.Between(50, 550);
       const bot = new Bot(this, x, y);
@@ -635,7 +635,7 @@ class MainScene extends Phaser.Scene {
     }
 
     this.guards = [];
-    for (let i = 0; i < 3; i++) { //ALTERAR QUANTIDADE DE GUARDAS (TIREI PRA FAZER AS BARREIRAS)
+    for (let i = 0; i < 2; i++) { //ALTERAR QUANTIDADE DE GUARDAS (TIREI PRA FAZER AS BARREIRAS)
       let guardX = Phaser.Math.Between(300, 500);
       let guardY = Phaser.Math.Between(300, 500);
       const guard = new Guarda(this, guardX, guardY);
@@ -794,6 +794,82 @@ this.physics.add.existing(barrier22, true);
 barrier4.setVisible(false);
 this.walls.push(barrier22);
 
+const barrier23 = this.add.rectangle(275, 90, 45, 60); 
+this.physics.add.existing(barrier23, true);
+barrier4.setVisible(false);
+this.walls.push(barrier23);
+
+const barrier24 = this.add.rectangle(420, 90, 35, 60); 
+this.physics.add.existing(barrier24, true);
+barrier4.setVisible(false);
+this.walls.push(barrier24);
+
+const barrier25 = this.add.rectangle(120, 90, 45, 60); 
+this.physics.add.existing(barrier25, true);
+barrier4.setVisible(false);
+this.walls.push(barrier25);
+
+const barrier26 = this.add.rectangle(275, 370, 45, 80); 
+this.physics.add.existing(barrier26, true);
+barrier4.setVisible(false);
+this.walls.push(barrier26);
+
+const barrier27 = this.add.rectangle(420, 370, 35, 80); 
+this.physics.add.existing(barrier27, true);
+barrier4.setVisible(false);
+this.walls.push(barrier27);
+
+const barrier28 = this.add.rectangle(120, 370, 45, 80); 
+this.physics.add.existing(barrier28, true);
+barrier4.setVisible(false);
+this.walls.push(barrier28);
+
+const barrier29 = this.add.rectangle(1400, 280, 180, 90); 
+this.physics.add.existing(barrier29, true);
+barrier4.setVisible(false);
+this.walls.push(barrier29);
+
+const barrier30 = this.add.rectangle(1350, 85, 245, 70); 
+this.physics.add.existing(barrier30, true);
+barrier4.setVisible(false);
+this.walls.push(barrier30);
+
+const barrier31 = this.add.rectangle(1045, 155, 170, 20); 
+this.physics.add.existing(barrier31, true);
+barrier4.setVisible(false);
+this.walls.push(barrier31);
+
+const barrier32 = this.add.rectangle(1045, 250, 150, 20); 
+this.physics.add.existing(barrier32, true);
+barrier4.setVisible(false);
+this.walls.push(barrier32);
+
+const barrier33 = this.add.rectangle(1045, 332, 170, 10); 
+this.physics.add.existing(barrier33, true);
+barrier4.setVisible(false);
+this.walls.push(barrier33);
+
+//BARREIRA DO BURACO QUE O BRUNO VAI ADICIONAR (COMENTADO ATÉ QUE SEJA DEFINIDO O TAMANHO CERTO)
+/* const barrier34 = this.add.rectangle(1820, 160, 40, 70); 
+this.physics.add.existing(barrier34, true);
+barrier4.setVisible(false);
+this.walls.push(barrier34); */
+
+const barrier35 = this.add.rectangle(973, 850, 102, 20); 
+this.physics.add.existing(barrier35, true);
+barrier4.setVisible(false);
+this.walls.push(barrier35);
+
+const barrier36 = this.add.rectangle(973, 680, 90, 100); 
+this.physics.add.existing(barrier36, true);
+barrier4.setVisible(false);
+this.walls.push(barrier36);
+
+const barrier37 = this.add.rectangle(1055, 660, 230, 50); 
+this.physics.add.existing(barrier37, true);
+barrier4.setVisible(false);
+this.walls.push(barrier37);
+
     // Adicionar colisões para todas as barreiras:
     this.walls.forEach((barrier) => {
       this.physics.add.collider(this.player, barrier);
@@ -866,7 +942,7 @@ this.walls.push(barrier22);
   }
 
   update() {
-    const speed = 200; //ALTERAR PARA 100 (MUDEI P FZR AS BARREIRAS)
+    const speed = 120; //ALTERAR PARA 100 (MUDEI P FZR AS BARREIRAS)
     this.player.body.setVelocity(0);
 
     // ── MOVIMENTAÇÃO: setas OU WASD ──

@@ -100,9 +100,6 @@ const config = {
     mode: Phaser.Scale.FIT, // O jogo será dimensionado para caber na tela, mantendo a proporção
     autoCenter: Phaser.Scale.CENTER_BOTH, // Centraliza o canvas horizontal e verticalmente
     parent: 'game-container', // ID do elemento HTML onde o jogo será injetado
-    // Estas propriedades `width` e `height` aqui são redundantes se já definidas acima,
-    // mas podem ser úteis para clareza ou se você quiser uma base diferente para a escala.
-    // Manter as mesmas da configuração principal é geralmente o ideal.
     width: 1920,
     height: 1080
   },
@@ -116,13 +113,9 @@ const config = {
     }
   },
 
-  // As cenas do seu jogo.
-  // MenuScene é a primeira a ser carregada.
-  // MainScene deve ser adicionada aqui para que o Phaser a conheça e possa iniciar.
-  scene: [MenuScene, MainScene], // **Certifique-se de que MainScene está aqui**
+
+  scene: [MenuScene, MainScene], 
   
-  // O elemento HTML onde o canvas do jogo será adicionado.
-  // Já definido na seção `scale.parent`, mas bom ter aqui também.
   parent: 'game-container'
 };
 
