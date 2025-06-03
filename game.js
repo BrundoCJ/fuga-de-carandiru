@@ -552,7 +552,7 @@ class MainScene extends Phaser.Scene {
       () => {
         this.hasKey = true;
         this.keyItem.destroy(); // remove a chave do mapa
-        this.showKeyIndicator = this.add.image(70, 65, "key").setScale(0.07).setScrollFactor(0); // mostra o ícone da chave no HUD
+        this.showKeyIndicator = this.add.image(618, 390, "key").setScale(0.07).setScrollFactor(0); // mostra o ícone da chave no HUD
       },
       null,
       this
@@ -585,7 +585,7 @@ class MainScene extends Phaser.Scene {
 
       const heartIcon = this.add
         .image(x, y, 'heart')
-        .setOrigin(0, 0)
+        .setOrigin(-17, -10)
         .setScale(0.5)
         .setScrollFactor(0); // fixa na câmera
 
@@ -596,7 +596,7 @@ class MainScene extends Phaser.Scene {
 
 
     // Definindo o zoom (2x)
-    this.cameras.main.setZoom(1.0); //ALTERAR PARA 2.0 OU 2.5 DEPOIS (ALTEREI PARA FAZER AS BARREIRAS)
+    this.cameras.main.setZoom(2.5); //ALTERAR PARA 2.0 OU 2.5 DEPOIS (ALTEREI PARA FAZER AS BARREIRAS)
 
     +  // (2) Sempre que a câmera mudar de zoom, reduzimos a escala do HUD em 1/zoom:
       this.cameras.main.on('zoom', (camera, zoom) => {
@@ -808,7 +808,7 @@ this.walls.push(barrier22);
   showKeyIndicator() {
     if (!this.keyIcon) {
       // Posição (50,50) no canto superior esquerdo, sem movimento com a câmera
-      this.keyIcon = this.add.image(50, 50, "key").setOrigin(0, 0).setScale(0.07).setScrollFactor(0);
+      this.keyIcon = this.add.image(-17, -10, "key").setOrigin(15, 56).setScale(0.07).setScrollFactor(0);
     }
   }
 
