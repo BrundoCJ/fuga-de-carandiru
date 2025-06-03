@@ -455,9 +455,14 @@ class MainScene extends Phaser.Scene {
     this.load.image("map", "assets/map.png");
 
     this.load.image('heart', 'assets/heart_sprite.png');
+
+    this.load.audio('somSoco', 'assets/somSoco.mp3');
+
   }
 
   create() {
+
+    this.somSoco = this.sound.add('somSoco');
     // Adiciona o map.png cobrindo toda a tela
     this.add
       .image(0, 0, "map")
@@ -920,6 +925,7 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
         );
         if (dist < 50) {
           bot.takeDamageFrom(this.player);
+          this.somSoco.play(); //TOCA O SOM AQUII
         }
       });
     }

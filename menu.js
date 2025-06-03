@@ -1,11 +1,3 @@
-// Importa a MainScene de game.js
-// É crucial que game.js seja carregado ANTES de menu.js no index.html
-// para que MainScene esteja definida quando este script for executado.
-// Se você está usando módulos ES6 (import/export), a sintaxe seria:
-// import { MainScene } from './game.js';
-// Mas como você está usando scripts globais no index.html, MainScene
-// já estará disponível no escopo global.
-
 class MenuScene extends Phaser.Scene {
   constructor() {
     super('MenuScene');
@@ -20,12 +12,8 @@ class MenuScene extends Phaser.Scene {
     this.load.image('newGame', 'assets/new_game.png');
     this.load.video('intro', 'assets/videoNewGame.mp4');
 
-    // **IMPORTANTE**: Embora as cenas carreguem seus próprios assets,
-    // se você quiser garantir que MainScene esteja pronta para iniciar
-    // sem um delay de carregamento, você pode pré-carregar os assets
-    // dela aqui também, ou mostrar uma tela de loading.
-    // Por simplicidade, vou manter a carga de assets da MainScene
-    // dentro de game.js, mas tenha isso em mente para jogos maiores.
+    this.load.audio('click', 'assets/clickMouse.mp3');
+
   }
 
   create() {
@@ -53,6 +41,7 @@ class MenuScene extends Phaser.Scene {
     // Quando o botão START for clicado
     start.setInteractive({ cursor: 'pointer' });
     start.on('pointerdown', () => {
+      this.sound.play('click'); // toca o som ok
       title.setVisible(false);
       start.setVisible(false);
       bg.setVisible(false);
@@ -73,6 +62,7 @@ class MenuScene extends Phaser.Scene {
 
       // Quando o botão NEW GAME for clicado
       newGameBtn.on('pointerdown', () => {
+        this.sound.play('click'); //toca o som dnv
         gameBg.setVisible(false);
         newGameBtn.setVisible(false);
 
