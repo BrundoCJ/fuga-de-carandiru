@@ -172,6 +172,50 @@ class Bot {
     }
   }
 }
+class Luladrao extends Bot {
+  constructor(scene, x, y) {
+    super(scene, x, y);
+    this.sprite.setTexture("luladrao_frente1");
+    this.sprite.setScale(0.2);
+  }
+
+  takeDamageFrom(player) {
+  super.takeDamageFrom(player);
+  if (this.scene.picanha && !this.scene.picanha.isPlaying) {
+    this.scene.picanha.play();
+  }
+}
+
+
+  updateAnimation() {
+    if (!this.alive) return;
+    const vx = this.sprite.body.velocity.x;
+    const vy = this.sprite.body.velocity.y;
+
+    if (Math.abs(vx) > Math.abs(vy)) {
+      if (vx > 0) this.playAnimIfNotPlaying("luladrao_walk_right");
+      else if (vx < 0) this.playAnimIfNotPlaying("luladrao_walk_left");
+      else this.stopAnimAndSetFrame("right");
+    } else if (Math.abs(vy) > 0) {
+      if (vy > 0) this.playAnimIfNotPlaying("luladrao_walk_down");
+      else if (vy < 0) this.playAnimIfNotPlaying("luladrao_walk_up");
+    } else {
+      this.stopAnimAndSetFrame("down");
+    }
+  }
+
+  stopAnimAndSetFrame(direction) {
+    this.sprite.anims.stop();
+    const frameKeyMap = {
+      down: "luladrao_frente1",
+      up: "luladrao_costas1",
+      left: "luladrao_esquerda1",
+      right: "luladrao_direita1",
+    };
+    this.sprite.setTexture(frameKeyMap[direction]);
+  }
+}
+
 
 class Guarda {
   constructor(scene, x, y) {
@@ -496,12 +540,30 @@ class MainScene extends Phaser.Scene {
     this.load.image('heart', 'assets/heart_sprite.png');
 
     this.load.audio('somSoco', 'assets/somSoco.mp3');
+    
+    this.load.audio('picanha', 'assets/picanha.mp3');
+
+
+    this.load.image("luladrao_frente1", "assets/luladrao_frente1.png");
+    this.load.image("luladrao_frente2", "assets/luladrao_frente2.png");
+
+    this.load.image("luladrao_costas1", "assets/luladrao_costas1.png");
+    this.load.image("luladrao_costas2", "assets/luladrao_costas2.png");
+  
+    this.load.image("luladrao_esquerda1", "assets/luladrao_esquerda1.png");
+    this.load.image("luladrao_esquerda2", "assets/luladrao_esquerda2.png");
+    
+    this.load.image("luladrao_direita1", "assets/luladrao_direita1.png");
+    this.load.image("luladrao_direita2", "assets/luladrao_direita2.png");
+
+    
+    
 
   }
 
   create() {
-
     this.somSoco = this.sound.add('somSoco');
+    this.picanha = this.sound.add('picanha');
     // Adiciona o map.png cobrindo toda a tela
     this.add
       .image(0, 0, "map")
@@ -548,6 +610,44 @@ class MainScene extends Phaser.Scene {
       frameRate: 8,
       repeat: -1,
     });
+
+    this.anims.create({
+  key: "luladrao_walk_down",
+  frames: [
+    { key: "luladrao_frente1" },
+    { key: "luladrao_frente2" },
+  ],
+  frameRate: 8,
+  repeat: -1,
+});
+this.anims.create({
+  key: "luladrao_walk_up",
+  frames: [
+    { key: "luladrao_costas1" },
+    { key: "luladrao_costas2" },
+  ],
+  frameRate: 8,
+  repeat: -1,
+});
+this.anims.create({
+  key: "luladrao_walk_left",
+  frames: [
+    { key: "luladrao_esquerda1" },
+    { key: "luladrao_esquerda2" },
+  ],
+  frameRate: 8,
+  repeat: -1,
+});
+this.anims.create({
+  key: "luladrao_walk_right",
+  frames: [
+    { key: "luladrao_direita1" },
+    { key: "luladrao_direita2" },
+  ],
+  frameRate: 8,
+  repeat: -1,
+});
+
 
     this.anims.create({
       key: "guarda_walk_down",
@@ -658,13 +758,24 @@ class MainScene extends Phaser.Scene {
     }
 
     this.guards = [];
-    for (let i = 0; i < 2; i++) { //ALTERAR QUANTIDADE DE GUARDAS (TIREI PRA FAZER AS BARREIRAS)
+    for (let i = 0; i < 7; i++) { //ALTERAR QUANTIDADE DE GUARDAS (TIREI PRA FAZER AS BARREIRAS)
       let guardX = Phaser.Math.Between(300, 500);
       let guardY = Phaser.Math.Between(300, 500);
       const guard = new Guarda(this, guardX, guardY);
       this.guards.push(guard);
       this.bots.push(guard);
     }
+
+    // Exemplo: criar 1 luladrao
+this.luladraos = [];
+for (let i = 0; i < 1; i++) {
+  const x = Phaser.Math.Between(100, 700);
+  const y = Phaser.Math.Between(100, 500);
+  const luladrao = new Luladrao(this, x, y);
+  this.luladraos.push(luladrao);
+  this.bots.push(luladrao); // Importante para incluir no update e colisões
+}
+
 
     // Adiciona colisão entre o jogador e os bots
     this.physics.add.collider(
