@@ -4,7 +4,9 @@ class Bot {
     this.sprite = scene.physics.add.sprite(x, y, "player_frente1");
     this.sprite.setScale(0.5);
     this.sprite.setCollideWorldBounds(true);
-    this.sprite.setBounce(1);
+    this.sprite.setBounce(0);
+    
+    
 
     this.sprite.body.setSize(30, 70);
     this.sprite.body.setOffset(15, 10);
@@ -71,38 +73,36 @@ class Bot {
   }
 
   takeDamageFrom(player) {
-    if (!this.alive) return;
+  if (!this.alive) return;
 
-    this.health--;
-    if (this.health <= 0) {
-      this.die();
-    } else {
-      if (!this.angry) {
-        this.angerHits++;
-        if (this.angerHits >= 3) {
-          this.angry = true;
-          this.startChasing(player);
-        }
-      }
+  this.health--;
+  if (this.health <= 0) {
+    this.die();
+  } else {
+    const dx = this.sprite.x - player.x;
+    const dy = this.sprite.y - player.y;
+    let dist = Math.sqrt(dx * dx + dy * dy);
 
-      const dx = this.sprite.x - player.x;
-      const dy = this.sprite.y - player.y;
-      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      const knockbackPower = 100;
+    // Evita divisão por zero e distância muito pequena
+    if (dist < 10) dist = 10;
 
-      this.sprite.setVelocity(
-        (dx / dist) * knockbackPower,
-        (dy / dist) * knockbackPower
-      );
-      this.sprite.setAlpha(0.5);
+    const knockbackPower = 100;
 
-      this.showHealthBar();
+    // Direção normalizada multiplicada por knockback limitado
+    this.sprite.setVelocity(
+      (dx / dist) * knockbackPower,
+      (dy / dist) * knockbackPower
+    );
 
-      this.scene.time.delayedCall(500, () => {
-        this.sprite.setAlpha(1);
-      });
-    }
+    this.sprite.setAlpha(0.5);
+    this.showHealthBar();
+
+    this.scene.time.delayedCall(500, () => {
+      this.sprite.setAlpha(1);
+    });
   }
+}
+
 
   startChasing(target) {
     this.angry = true;
@@ -180,7 +180,7 @@ class Guarda {
     this.sprite.setOrigin(0.5, 1);
     this.sprite.setScale(0.3);
     this.sprite.setCollideWorldBounds(true);
-    this.sprite.setBounce(1);
+    this.sprite.setBounce(0);
 
     this.sprite.body.setSize(70, 130);
     this.sprite.body.setOffset(15, 10);
@@ -276,7 +276,7 @@ class Guarda {
 
     this.sprite.setTexture(frameKeyMap[direction]);
     this.sprite.setOrigin(0.5, 1);
-    this.sprite.setScale(0.4);
+    this.sprite.setScale(0.3);
     this.sprite.setY(this.originalY);
   }
 
@@ -306,7 +306,7 @@ class Guarda {
       const dx = this.sprite.x - player.x;
       const dy = this.sprite.y - player.y;
       const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      const knockbackPower = 100;
+      const knockbackPower = 50;
 
       this.sprite.setVelocity(
         (dx / dist) * knockbackPower,
@@ -377,6 +377,45 @@ class Guarda {
 }
 
 class MainScene extends Phaser.Scene {
+  getRandomKeyPosition() {
+  const margin = 50; // margem para não spawnar na borda
+  const maxAttempts = 100; // evita loop infinito
+  const minDistanceFromPlayer = 200; // distância mínima da posição do jogador (spawn)
+
+  // Posição inicial do jogador (spawn)
+  const playerSpawnX = 400;
+  const playerSpawnY = 300;
+
+  for (let i = 0; i < maxAttempts; i++) {
+    const x = Phaser.Math.Between(margin, 1920 - margin);
+    const y = Phaser.Math.Between(margin, 1080 - margin);
+
+    // Cria um ponto para teste
+    const point = new Phaser.Geom.Point(x, y);
+
+    // Verifica se o ponto está dentro de alguma barreira
+    const collides = this.walls.some(barrier => {
+      const rect = new Phaser.Geom.Rectangle(
+        barrier.x - barrier.width / 2,
+        barrier.y - barrier.height / 2,
+        barrier.width,
+        barrier.height
+      );
+      return Phaser.Geom.Rectangle.ContainsPoint(rect, point);
+    });
+
+    // Verifica se está longe do spawn do jogador
+    const distFromPlayer = Phaser.Math.Distance.Between(x, y, playerSpawnX, playerSpawnY);
+
+    if (!collides && distFromPlayer >= minDistanceFromPlayer) {
+      return { x, y };
+    }
+  }
+
+  // Se não achou posição após tentativas, retorna uma posição fixa segura longe do spawn
+  return { x: playerSpawnX + minDistanceFromPlayer, y: playerSpawnY };
+}
+
   constructor() {
     super("MainScene");
 
@@ -544,24 +583,8 @@ class MainScene extends Phaser.Scene {
 
     this.cameras.main.startFollow(this.player);
 
-    // Cria o sprite da chave em uma posição fixa no mapa
-    this.keyItem = this.physics.add.sprite(200, 300, "key").setScale(0.05);
-
     // Variável que indica se o jogador tem a chave
     this.hasKey = false;
-
-    // Configura o overlap entre jogador e chave para coletar
-    this.physics.add.overlap(
-      this.player,
-      this.keyItem,
-      () => {
-        this.hasKey = true;
-        this.keyItem.destroy(); // remove a chave do mapa
-        this.showKeyIndicator = this.add.image(618, 390, "key").setScale(0.07).setScrollFactor(0); // mostra o ícone da chave no HUD
-      },
-      null,
-      this
-    );
 
     this.lives = 5;
     this.maxLives = 5;
@@ -882,8 +905,21 @@ this.walls.push(barrier37);
         barrier
       );
     });
+     const pos = this.getRandomKeyPosition();
+  this.keyItem = this.physics.add.sprite(pos.x, pos.y, "key").setScale(0.05);
 
-    //BARREIRAS ==========================================================
+  // Configura o overlap entre jogador e chave para coletar
+    this.physics.add.overlap(
+      this.player,
+      this.keyItem,
+      () => {
+        this.hasKey = true;
+        this.keyItem.destroy(); // remove a chave do mapa
+        this.showKeyIndicator = this.add.image(618, 390, "key").setScale(0.07).setScrollFactor(0); // mostra o ícone da chave no HUD
+      },
+      null,
+      this
+    );
   }
 
   showKeyIndicator() {
@@ -909,6 +945,9 @@ this.walls.push(barrier37);
           bot.chaseTarget = null;
           bot.setRandomVelocity();
           return; // Não causa mais dano
+        }
+        if (bot instanceof Guarda) {
+         bot.startChasing(this.player);
         }
 
         this.playerInvincible = true;
