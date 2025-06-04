@@ -11,7 +11,7 @@ class Bot {
     this.sprite.body.setSize(30, 70);
     this.sprite.body.setOffset(15, 10);
 
-    this.maxHealth = 50;
+    this.maxHealth = 30;
     this.health = this.maxHealth;
     this.alive = true;
 
@@ -177,6 +177,33 @@ class Luladrao extends Bot {
     super(scene, x, y);
     this.sprite.setTexture("luladrao_frente1");
     this.sprite.setScale(0.2);
+  }
+
+  // Sobrescrevendo o método die() para o bot Luladrao
+  die() {
+    this.alive = false;  // Marca o Luladrao como morto
+    this.sprite.setVelocity(0, 0);
+    this.sprite.setTint(0xff6666);
+    this.sprite.setAlpha(0.5);
+    this.sprite.anims.stop();
+    this.healthBar.clear();
+    this.healthBar.setAlpha(0);
+
+    // Posiciona o item (chave) no local do Luladrao morto
+    const keyItem02 = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "key").setScale(0.05);
+    
+    // Configura o overlap entre jogador e chave para coletar
+    this.scene.physics.add.overlap(
+      this.scene.player,  // Assumindo que o jogador seja chamado "player"
+      keyItem02,
+      () => {
+        this.scene.hasKey = true;  // Marca que o jogador tem a chave
+        keyItem02.destroy();  // Remove a chave do mapa
+        this.scene.showKeyIndicator = this.scene.add.image(658, 390, "key").setScale(0.07).setScrollFactor(0);  // Mostra a chave no HUD
+      },
+      null,
+      this.scene
+    );
   }
 
   takeDamageFrom(player) {
