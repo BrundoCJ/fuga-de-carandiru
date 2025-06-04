@@ -86,7 +86,7 @@ class Bot {
     // Evita divisão por zero e distância muito pequena
     if (dist < 10) dist = 10;
 
-    const knockbackPower = 100;
+    const knockbackPower = 30;
 
     // Direção normalizada multiplicada por knockback limitado
     this.sprite.setVelocity(
@@ -177,6 +177,8 @@ class Luladrao extends Bot {
     super(scene, x, y);
     this.sprite.setTexture("luladrao_frente1");
     this.sprite.setScale(0.2);
+    this.sprite.body.setSize(100, 200);  // Largura: 40, Altura: 80 (ajuste conforme necessário)
+    this.sprite.body.setOffset(10, 10)
   }
 
   // Sobrescrevendo o método die() para o bot Luladrao
@@ -293,7 +295,7 @@ class Guarda {
       this.chaseTimer.remove(false);
     }
 
-    this.chaseTimer = this.scene.time.delayedCall(6000, () => {
+    this.chaseTimer = this.scene.time.delayedCall(30000, () => {
       this.isChasing = false;
       this.chaseTarget = null;
       this.setRandomVelocity();
@@ -785,13 +787,28 @@ this.anims.create({
     }
 
     this.guards = [];
-    for (let i = 0; i < 7; i++) { //ALTERAR QUANTIDADE DE GUARDAS (TIREI PRA FAZER AS BARREIRAS)
-      let guardX = Phaser.Math.Between(300, 500);
-      let guardY = Phaser.Math.Between(300, 500);
-      const guard = new Guarda(this, guardX, guardY);
-      this.guards.push(guard);
-      this.bots.push(guard);
+for (let i = 0; i < 15; i++) { // Número de guardas
+  let guardX, guardY;
+  let validPosition = false;
+
+  // Gera a posição do guarda de forma que fique distante do jogador
+  while (!validPosition) {
+    guardX = Phaser.Math.Between(300, 1920);  // Posição X aleatória (fora do alcance próximo do jogador)
+    guardY = Phaser.Math.Between(100, 1080);  // Posição Y aleatória
+
+    // Verifica a distância entre o guarda e o jogador
+    const dist = Phaser.Math.Distance.Between(guardX, guardY, this.player.x, this.player.y);
+
+    // Se a distância for maior que 300 pixels, o guarda pode ser colocado lá
+    if (dist > 300) {
+      validPosition = true;  // Encontrei uma posição válida
     }
+  }
+
+  const guard = new Guarda(this, guardX, guardY); // Cria o guarda
+  this.guards.push(guard);
+  this.bots.push(guard); // Adiciona o guarda à lista de bots
+}
 
     // Exemplo: criar 1 luladrao
 this.luladraos = [];
