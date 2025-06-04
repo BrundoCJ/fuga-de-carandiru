@@ -500,32 +500,15 @@ class MainScene extends Phaser.Scene {
       "Tá olhando o quê?",
       "Pule as grades.",
       "Foi preso por quê?",
-      "Melhor ficar na sua.",
       "Tem um plano aí?",
       "Cuidado com os guardas.",
-      "Não confie em ninguém aqui.",
-      "A noite é perigosa.",
-      "Fique esperto com os informantes.",
-      "Essa prisão tem seus segredos.",
-      "Tente fazer amigos, ou vai sofrer.",
-      "Os guardas estão mais atentos hoje.",
-      "Ouvi falar de uma fuga ontem.",
-      "Não crie inimizades à toa.",
-      "Aqui dentro o silêncio é ouro.",
       "Não deixe ninguém te enganar.",
       "Já viu o túnel na cela 3?",
-      "Cuidado com as câmeras.",
-      "Procure o velho Carlos, ele sabe tudo.",
+      "Procure o velho Lula, dizem que ele está com uma chave.", // Dica sobre a procima chave
       "Se precisar de ajuda, me chame.",
-      "Não seja bobo, proteja o que é seu.",
-      "Eles sempre estão de olho.",
-      "Tem muita gente que não é quem parece.",
-      "Nada é como parece por aqui.",
-      "A saída não é fácil, mas existe.",
-      "Fique calmo e espere a hora certa.",
-      "O silêncio pode salvar sua vida.",
       "Nunca confie nas promessas dos outros.",
       "Lembre-se: aqui dentro, o tempo passa devagar.",
+      "A terceira chave está lá fora",
     ];
 
     this.guards = [];
@@ -535,6 +518,20 @@ class MainScene extends Phaser.Scene {
     this.livesBar = null;
 
     this.playerInvincible = false;
+    
+    // Add hole animation state
+    this.holeAnimationState = 0;
+    this.holeSprite = null;
+    this.holeInteractionText = null;
+    this.isNearHole = false;
+    this.cKey = null;
+    this.holeInteractionEnabled = false;
+    
+    // Add second key state
+    this.secondKeyItem = null;
+    this.hasSecondKey = false;
+    this.keyIcon = null;        // Primeira chave no HUD
+    this.secondKeyIcon = null;  // Segunda chave no HUD
   }
 
   preload() {
@@ -585,9 +582,10 @@ class MainScene extends Phaser.Scene {
     this.load.image("luladrao_direita1", "assets/luladrao_direita1.png");
     this.load.image("luladrao_direita2", "assets/luladrao_direita2.png");
 
-    
-    
-
+    // Load hole animation frames
+    for (let i = 1; i <= 5; i++) {
+      this.load.image(`buraco${i}`, `assets/buraco${i}.png`);
+    }
   }
 
   create() {
@@ -730,13 +728,13 @@ this.anims.create({
     const heartWidth = 32;  // 64px * 0.5
     const heartHeight = 32; // 64px * 0.5
 
-    // 4) Queremos que eles fiquem “5px acima” do topo da chave
+    // 4) Queremos que eles fiquem "5px acima" do topo da chave
     const spacingBetweenHearts = 2; // em px
     const heartsBaseY = keyY - heartHeight - 5; // 50 - 32 - 5 = 13
 
     // 5) Agora criamos tantos corações quanto maxLives, alinhados em linha a partir de keyX:
     for (let i = 0; i < this.maxLives; i++) {
-      // cada coração desloca em X de “heartWidth + spacing” para o lado direito
+      // cada coração desloca em X de "heartWidth + spacing" para o lado direito
       const x = keyX + i * (heartWidth + spacingBetweenHearts);
       const y = heartsBaseY;
 
@@ -755,17 +753,17 @@ this.anims.create({
     // Definindo o zoom (2x)
     this.cameras.main.setZoom(2.5); //ALTERAR PARA 2.0 OU 2.5 DEPOIS (ALTEREI PARA FAZER AS BARREIRAS)
 
-    +  // (2) Sempre que a câmera mudar de zoom, reduzimos a escala do HUD em 1/zoom:
-      this.cameras.main.on('zoom', (camera, zoom) => {
-        // cada coração tinha scale-base = 0.5
-        this.hearts.forEach(h => {
-          h.setScale(0.5 / zoom);
-        });
-        // o ícone da chave tinha scale-base = 0.07
-        if (this.keyIcon) {
-          this.keyIcon.setScale(0.07 / zoom);
-        }
+    // (2) Sempre que a câmera mudar de zoom, reduzimos a escala do HUD em 1/zoom:
+    this.cameras.main.on('zoom', (camera, zoom) => {
+      // cada coração tinha scale-base = 0.5
+      this.hearts.forEach(h => {
+        h.setScale(0.5 / zoom);
       });
+      // o ícone da chave tinha scale-base = 0.07
+      if (this.keyIcon) {
+        this.keyIcon.setScale(0.07 / zoom);
+      }
+    });
     // ── FIM DO TRECHO ADICIONADO ──
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spaceKey = this.input.keyboard.addKey(
@@ -1070,8 +1068,33 @@ this.walls.push(barrier37);
       () => {
         this.hasKey = true;
         this.keyItem.destroy(); // remove a chave do mapa
-        this.showKeyIndicator = this.add.image(618, 390, "key").setScale(0.07).setScrollFactor(0); // mostra o ícone da chave no HUD
+        this.showKeyIndicator();
       },
+      null,
+      this
+    );
+
+    // Add hole sprite (initially disabled)
+    this.holeSprite = this.physics.add.sprite(1820, 160, 'buraco1').setScale(0.3);
+    this.holeSprite.setImmovable(true);
+    this.holeSprite.setVisible(false);
+    
+    // Add C key
+    this.cKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
+
+    // Add interaction text (initially hidden)
+    this.holeInteractionText = this.add.text(0, 0, 'Pressione C para interagir', {
+      font: '16px Arial',
+      fill: '#ffffff',
+      backgroundColor: '#000000',
+      padding: { x: 5, y: 3 }
+    }).setOrigin(0.5).setVisible(false);
+
+    // Add overlap detection for hole interaction
+    this.physics.add.overlap(
+      this.player,
+      this.holeSprite,
+      this.handleHoleOverlap,
       null,
       this
     );
@@ -1079,8 +1102,21 @@ this.walls.push(barrier37);
 
   showKeyIndicator() {
     if (!this.keyIcon) {
-      // Posição (50,50) no canto superior esquerdo, sem movimento com a câmera
-      this.keyIcon = this.add.image(-17, -10, "key").setOrigin(15, 56).setScale(0.07).setScrollFactor(0);
+      // Posição da primeira chave no HUD, abaixo dos corações
+      this.keyIcon = this.add.image(618, 390, "key")  // Aumentei o Y para 90 para ficar abaixo dos corações
+        .setOrigin(0.5)  // Centraliza a chave
+        .setScale(0.07)
+        .setScrollFactor(0);
+    }
+  }
+
+  showSecondKeyIndicator() {
+    if (!this.secondKeyIcon) {
+      // Posição da segunda chave no HUD, ao lado da primeira chave
+      this.secondKeyIcon = this.add.image(698, 390, "key")  // Ajustei X para 90 e Y para 90
+        .setOrigin(0.5)  // Centraliza a chave
+        .setScale(0.07)
+        .setScrollFactor(0);
     }
   }
 
@@ -1132,6 +1168,27 @@ this.walls.push(barrier37);
   updateHearts() {
     for (let i = 0; i < this.hearts.length; i++) {
       this.hearts[i].setVisible(i < this.lives);
+    }
+  }
+
+  handleHoleOverlap(player, hole) {
+    // Only show interaction if hole interaction is enabled
+    if (!this.holeInteractionEnabled) return;
+
+    const dist = Phaser.Math.Distance.Between(
+      player.x,
+      player.y,
+      hole.x,
+      hole.y
+    );
+    
+    if (dist < 50) {
+      this.isNearHole = true;
+      this.holeInteractionText.setPosition(hole.x, hole.y - 40);
+      this.holeInteractionText.setVisible(true);
+    } else {
+      this.isNearHole = false;
+      this.holeInteractionText.setVisible(false);
     }
   }
 
@@ -1200,6 +1257,55 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
       });
     }
 
+    // Handle hole interaction (only if enabled)
+    if (this.holeInteractionEnabled && this.isNearHole && Phaser.Input.Keyboard.JustDown(this.cKey)) {
+      if (this.holeAnimationState === 0) {
+        // First interaction - show key message
+        this.showBotMessage(null, "A terceira chave está lá fora");
+        this.holeAnimationState = 1;
+      } else if (this.holeAnimationState >= 1 && this.holeAnimationState < 5) {
+        // Play next animation frame
+        this.holeAnimationState++;
+        this.holeSprite.setTexture(`buraco${this.holeAnimationState}`);
+        
+        // When reaching the last animation frame, spawn the second key
+        if (this.holeAnimationState === 5 && !this.secondKeyItem) {
+          // Spawn the second key near the hole
+          this.secondKeyItem = this.physics.add.sprite(
+            this.holeSprite.x + 50,
+            this.holeSprite.y,
+            "key"
+          ).setScale(0.05);
+
+          // Add overlap detection for second key collection
+          this.physics.add.overlap(
+            this.player,
+            this.secondKeyItem,
+            () => {
+              if (!this.hasSecondKey) {  // Só coleta se ainda não tiver a chave
+                this.hasSecondKey = true;
+                this.secondKeyItem.destroy();
+                this.showSecondKeyIndicator();
+                
+                // Esconde o buraco e desativa a interação
+                this.holeSprite.setVisible(false);
+                this.holeInteractionEnabled = false;
+                this.holeInteractionText.setVisible(false);
+                this.isNearHole = false;
+              }
+            },
+            null,
+            this
+          );
+        }
+      }
+    }
+
+    // Update hole interaction text position if visible
+    if (this.holeInteractionText.visible) {
+      this.holeInteractionText.setPosition(this.holeSprite.x, this.holeSprite.y - 40);
+    }
+
     this.bots.forEach((bot) => {
       if (bot instanceof Guarda || bot instanceof Bot) {
         bot.update();
@@ -1213,25 +1319,48 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
   }
 
   showBotMessage(bot, message) {
-    if (bot.messageText) {
-      bot.messageText.destroy();
-    }
-
-    bot.messageText = this.add
-      .text(bot.sprite.x, bot.sprite.y - 40, message, {
-        font: "16px Arial",
-        fill: "#fff",
-        backgroundColor: "rgba(0,0,0,0.7)",
-        padding: { x: 5, y: 3 },
-        align: "center",
-      })
-      .setOrigin(0.5);
-
-    this.time.delayedCall(2000, () => {
+    if (bot) {
       if (bot.messageText) {
         bot.messageText.destroy();
-        bot.messageText = null;
       }
-    });
+
+      bot.messageText = this.add
+        .text(bot.sprite.x, bot.sprite.y - 40, message, {
+          font: "16px Arial",
+          fill: "#fff",
+          backgroundColor: "rgba(0,0,0,0.7)",
+          padding: { x: 5, y: 3 },
+          align: "center",
+        })
+        .setOrigin(0.5);
+
+      this.time.delayedCall(2000, () => {
+        if (bot.messageText) {
+          bot.messageText.destroy();
+          bot.messageText = null;
+        }
+      });
+    } else {
+      // For hole messages
+      const text = this.add
+        .text(this.holeSprite.x, this.holeSprite.y - 60, message, {
+          font: "16px Arial",
+          fill: "#fff",
+          backgroundColor: "rgba(0,0,0,0.7)",
+          padding: { x: 5, y: 3 },
+          align: "center",
+        })
+        .setOrigin(0.5);
+
+      this.time.delayedCall(2000, () => {
+        text.destroy();
+      });
+    }
+
+    // Enable hole interaction if this is the specific message
+    if (message === "A terceira chave está lá fora") {
+      this.holeInteractionEnabled = true;
+      this.holeSprite.setVisible(true);
+    }
   }
 }
