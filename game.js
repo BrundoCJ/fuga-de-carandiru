@@ -199,7 +199,7 @@ class Luladrao extends Bot {
       this.scene.player,  // Assumindo que o jogador seja chamado "player"
       keyItem02,
       () => {
-        this.scene.hasKey = true;  // Marca que o jogador tem a chave
+        this.scene.hasKey02 = true;  // Marca que o jogador tem a chave
         keyItem02.destroy();  // Remove a chave do mapa
         this.scene.showKeyIndicator = this.scene.add.image(658, 390, "key").setScale(0.07).setScrollFactor(0);  // Mostra a chave no HUD
       },
@@ -245,6 +245,155 @@ class Luladrao extends Bot {
   }
 }
 
+class Moreno extends Bot {
+  constructor(scene, x, y) {
+    super(scene, x, y);
+    this.sprite.setTexture("moreno_frente1");
+    this.sprite.setScale(0.2);
+    this.sprite.body.setSize(100, 200);  // Largura: 40, Altura: 80 (ajuste conforme necessário)
+    this.sprite.body.setOffset(10, 10)
+  }
+
+  // Sobrescrevendo o método die() para o bot Moreno
+  die() {
+    this.alive = false;  // Marca o Moreno como morto
+    this.sprite.setVelocity(0, 0);
+    this.sprite.setTint(0xff6666);
+    this.sprite.setAlpha(0.5);
+    this.sprite.anims.stop();
+    this.healthBar.clear();
+    this.healthBar.setAlpha(0);
+
+    // Posiciona o item (badge) no local do Moreno morto
+    const BikeBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "bike_badge").setScale(0.05);
+    
+    // Configura o overlap entre jogador e badge para coletar
+    this.scene.physics.add.overlap(
+      this.scene.player,  // Assumindo que o jogador seja chamado "player"
+      BikeBadge,
+      () => {
+        this.scene.hasBikeBadge = true;  // Marca que o jogador tem a badge
+        BikeBadge.destroy();  // Remove a badge do mapa
+
+        // !=================== !AJUSTAR POSIÇÃO DA BADGE (apenas a primeira variável "958 atualmente")! ===================!
+        this.scene.showKeyIndicator = this.scene.add.image(958, 390, "bike_badge").setScale(0.07).setScrollFactor(0);  // Mostra a badge no HUD
+      },
+      null,
+      this.scene
+    );
+  }
+// !=========================================== !ADICIONAR SOM DO MORENO! ===========================================!
+//   takeDamageFrom(player) {
+//   super.takeDamageFrom(player);
+//   if (this.scene.picanha && !this.scene.picanha.isPlaying) {
+//     this.scene.picanha.play();
+//   }
+// }
+
+
+  updateAnimation() {
+    if (!this.alive) return;
+    const vx = this.sprite.body.velocity.x;
+    const vy = this.sprite.body.velocity.y;
+
+    if (Math.abs(vx) > Math.abs(vy)) {
+      if (vx > 0) this.playAnimIfNotPlaying("moreno_walk_right");
+      else if (vx < 0) this.playAnimIfNotPlaying("moreno_walk_left");
+      else this.stopAnimAndSetFrame("right");
+    } else if (Math.abs(vy) > 0) {
+      if (vy > 0) this.playAnimIfNotPlaying("moreno_walk_down");
+      else if (vy < 0) this.playAnimIfNotPlaying("moreno_walk_up");
+    } else {
+      this.stopAnimAndSetFrame("down");
+    }
+  }
+
+  stopAnimAndSetFrame(direction) {
+    this.sprite.anims.stop();
+    const frameKeyMap = {
+      down: "moreno_frente1",
+      up: "moreno_costas1",
+      left: "moreno_esquerda1",
+      right: "moreno_direita1",
+    };
+    this.sprite.setTexture(frameKeyMap[direction]);
+  }
+}
+
+class Hugo extends Bot {
+  constructor(scene, x, y) {
+    super(scene, x, y);
+    this.sprite.setTexture("hugo_frente1");
+    this.sprite.setScale(0.2);
+    this.sprite.body.setSize(100, 200);  // Largura: 40, Altura: 80 (ajuste conforme necessário)
+    this.sprite.body.setOffset(10, 10)
+  }
+
+  // Sobrescrevendo o método die() para o bot Hugo
+  die() {
+    this.alive = false;  // Marca o Hugo como morto
+    this.sprite.setVelocity(0, 0);
+    this.sprite.setTint(0xff6666);
+    this.sprite.setAlpha(0.5);
+    this.sprite.anims.stop();
+    this.healthBar.clear();
+    this.healthBar.setAlpha(0);
+
+    // Posiciona o item (ZeroBadge) no local do Hugo morto
+    const ZeroBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "zero_badge").setScale(0.05);
+    
+    // Configura o overlap entre jogador e badge para coletar
+    this.scene.physics.add.overlap(
+      this.scene.player,  // Assumindo que o jogador seja chamado "player"
+      ZeroBadge,
+      () => {
+        this.scene.hasZeroBadge = true;  // Marca que o jogador tem a badge
+        ZeroBadge.destroy();  // Remove a badge do mapa
+
+        // !=================== !AJUSTAR POSIÇÃO DA BADGE (apenas a primeira variável "958 atualmente")! ===================!
+        this.scene.showKeyIndicator = this.scene.add.image(958, 390, "zero_badge").setScale(0.07).setScrollFactor(0);  // Mostra a badge no HUD
+      },
+      null,
+      this.scene
+    );
+  }
+// !=========================================== !ADICIONAR SOM DO HUGO! ===========================================!
+//   takeDamageFrom(player) {
+//   super.takeDamageFrom(player);
+//   if (this.scene.picanha && !this.scene.picanha.isPlaying) {
+//     this.scene.picanha.play();
+//   }
+// }
+
+
+  updateAnimation() {
+    if (!this.alive) return;
+    const vx = this.sprite.body.velocity.x;
+    const vy = this.sprite.body.velocity.y;
+
+    if (Math.abs(vx) > Math.abs(vy)) {
+      if (vx > 0) this.playAnimIfNotPlaying("hugo_walk_right");
+      else if (vx < 0) this.playAnimIfNotPlaying("hugo_walk_left");
+      else this.stopAnimAndSetFrame("right");
+    } else if (Math.abs(vy) > 0) {
+      if (vy > 0) this.playAnimIfNotPlaying("hugo_walk_down");
+      else if (vy < 0) this.playAnimIfNotPlaying("hugo_walk_up");
+    } else {
+      this.stopAnimAndSetFrame("down");
+    }
+  }
+
+  stopAnimAndSetFrame(direction) {
+    this.sprite.anims.stop();
+    const frameKeyMap = {
+      down: "hugo_frente1",
+      up: "hugo_costas1",
+      left: "hugo_esquerda1",
+      right: "hugo_direita1",
+    };
+    this.sprite.setTexture(frameKeyMap[direction]);
+  }
+}
 
 class Guarda {
   constructor(scene, x, y) {
@@ -712,6 +861,10 @@ this.anims.create({
 
     // Variável que indica se o jogador tem a chave
     this.hasKey = false;
+    this.hasKey02 = false;
+    this.hasBikeBagde = false;
+    this.hasZeroBagde = false;
+    this.hasPicanhaBagde = false;
 
     this.lives = 5;
     this.maxLives = 5;
@@ -818,6 +971,23 @@ for (let i = 0; i < 1; i++) {
   this.bots.push(luladrao); // Importante para incluir no update e colisões
 }
 
+this.morenos = [];
+for (let i = 0; i < 1; i++) {
+  const x = Phaser.Math.Between(100, 700);
+  const y = Phaser.Math.Between(100, 500);
+  const moreno = new Moreno(this, x, y);
+  this.morenos.push(moreno);
+  this.bots.push(moreno); // Importante para incluir no update e colisões
+}
+
+this.hugos = [];
+for (let i = 0; i < 1; i++) {
+  const x = Phaser.Math.Between(100, 700);
+  const y = Phaser.Math.Between(100, 500);
+  const hugo = new Hugo(this, x, y);
+  this.hugos.push(hugo);
+  this.bots.push(hugo); // Importante para incluir no update e colisões
+}
 
     // Adiciona colisão entre o jogador e os bots
     this.physics.add.collider(
