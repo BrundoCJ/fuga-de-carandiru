@@ -276,7 +276,7 @@ class Moreno extends Bot {
         BikeBadge.destroy();  // Remove a badge do mapa
 
         // !=================== !AJUSTAR POSIÇÃO DA BADGE (apenas a primeira variável "958 atualmente")! ===================!
-        this.scene.showKeyIndicator = this.scene.add.image(958, 390, "bike_badge").setScale(0.07).setScrollFactor(0);  // Mostra a badge no HUD
+        this.scene.showKeyIndicator = this.scene.add.image(1250, 350, "bike_badge").setScale(0.05).setScrollFactor(0);  // Mostra a badge no HUD
       },
       null,
       this.scene
@@ -744,6 +744,8 @@ class MainScene extends Phaser.Scene {
     this.load.image("luladrao_direita1", "assets/luladrao_direita1.png");
     this.load.image("luladrao_direita2", "assets/luladrao_direita2.png");
 
+    this.load.image("picanha_badge", "assets/picanha_luladra.png");
+
     this.load.image("hugo_frente1", "assets/hugo_frente1.png");
 
     this.load.image("hugo_costas1", "assets/hugo_costas1.png");
@@ -756,6 +758,20 @@ class MainScene extends Phaser.Scene {
     this.load.image("hugo_esquerda2", "assets/hugo_esquerda2.png");
 
     this.load.image("zero_badge", "assets/zero_badge.png");
+
+    this.load.image("moreno_frente1", "assets/moreno_frente1.png");
+    this.load.image("moreno_frente2", "assets/moreno_frente2.png");
+
+    this.load.image("moreno_direita1", "assets/moreno_direita1.png");
+    this.load.image("moreno_direita2", "assets/moreno_direita2.png");
+
+    this.load.image("moreno_esquerda1", "assets/moreno_esquerda1.png");
+    this.load.image("moreno_esquerda2", "assets/moreno_esquerda2.png");
+
+    this.load.image("moreno_costas1", "assets/moreno_costas1.png");
+    this.load.image("moreno_costas2", "assets/moreno_costas2.png");
+
+    this.load.image("bike_badge", "assets/bike_badge.png"); 
     // Load hole animation frames
     for (let i = 1; i <= 5; i++) {
       this.load.image(`buraco${i}`, `assets/buraco${i}.png`);
@@ -915,7 +931,45 @@ this.anims.create({
   repeat: -1
 });
 
+this.anims.create({
+  key: 'moreno_walk_down',
+  frames: [
+    { key: 'moreno_frente1' },
+    { key: 'moreno_frente2' },
+  ],
+  frameRate: 8,
+  repeat: -1
+});
 
+this.anims.create({
+  key: 'moreno_walk_up',
+  frames: [
+    { key: 'moreno_costas1' },
+    { key: 'moreno_costas2' },
+  ],
+  frameRate: 8,
+  repeat: -1
+});
+
+this.anims.create({
+  key: 'moreno_walk_left',
+  frames: [
+    { key: 'moreno_esquerda1' },
+    { key: 'moreno_esquerda2' },
+  ],
+  frameRate: 8,
+  repeat: -1
+});
+
+this.anims.create({
+  key: 'moreno_walk_right',
+  frames: [
+    { key: 'moreno_direita1' },
+    { key: 'moreno_direita2' },
+  ],
+  frameRate: 8,
+  repeat: -1
+});
 
     this.player = this.add.sprite(400, 300, "player_frente1");
     this.physics.add.existing(this.player);
