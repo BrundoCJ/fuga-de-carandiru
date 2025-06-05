@@ -196,12 +196,12 @@ class Luladrao extends Bot {
     
     // Configura o overlap entre jogador e chave para coletar
     this.scene.physics.add.overlap(
-      this.scene.player,  // Assumindo que o jogador seja chamado "player"
+      this.scene.player,
       keyItem02,
       () => {
         this.scene.hasKey02 = true;  // Marca que o jogador tem a chave
         keyItem02.destroy();  // Remove a chave do mapa
-        this.scene.showKeyIndicator = this.scene.add.image(658, 390, "key").setScale(0.07).setScrollFactor(0);  // Mostra a chave no HUD
+        this.scene.showSecondKeyIndicator();  // Mostra a chave no HUD
       },
       null,
       this.scene
@@ -647,13 +647,12 @@ class MainScene extends Phaser.Scene {
       "Pra fugir da prisão, tente o duto secreto.",
       "Se manda!",
       "Tá olhando o quê?",
-      "Pule as grades.",
       "Foi preso por quê?",
       "Tem um plano aí?",
       "Cuidado com os guardas.",
       "Não deixe ninguém te enganar.",
       "Já viu o túnel na cela 3?",
-      "Procure o velho Lula, dizem que ele está com uma chave.", // Dica sobre a procima chave
+      "Procure o velho Lula, dizem que ele está com uma chave.",
       "Se precisar de ajuda, me chame.",
       "Nunca confie nas promessas dos outros.",
       "Lembre-se: aqui dentro, o tempo passa devagar.",
@@ -676,11 +675,17 @@ class MainScene extends Phaser.Scene {
     this.cKey = null;
     this.holeInteractionEnabled = false;
     
-    // Add second key state
-    this.secondKeyItem = null;
-    this.hasSecondKey = false;
+    // Add key states and indicators
+    this.hasKey = false;
+    this.hasKey02 = false;
+    this.hasKey03 = false;
     this.keyIcon = null;        // Primeira chave no HUD
-    this.secondKeyIcon = null;  // Segunda chave no HUD
+    this.keyIcon02 = null;      // Segunda chave no HUD
+    this.keyIcon03 = null;      // Terceira chave no HUD
+    this.keyItem03 = null;      // Terceira chave (do buraco)
+    this.hasBikeBadge = false;
+    this.hasZeroBadge = false;
+    this.hasPicanhaBadge = false;
   }
 
   preload() {
@@ -862,6 +867,8 @@ this.anims.create({
     // Variável que indica se o jogador tem a chave
     this.hasKey = false;
     this.hasKey02 = false;
+    this.hasKey03 = false;
+    this.keyItem03 = null;
     this.hasBikeBagde = false;
     this.hasZeroBagde = false;
     this.hasPicanhaBagde = false;
@@ -1272,19 +1279,29 @@ this.walls.push(barrier37);
 
   showKeyIndicator() {
     if (!this.keyIcon) {
-      // Posição da primeira chave no HUD, abaixo dos corações
-      this.keyIcon = this.add.image(618, 390, "key")  // Aumentei o Y para 90 para ficar abaixo dos corações
-        .setOrigin(0.5)  // Centraliza a chave
+      // Posição da primeira chave no HUD
+      this.keyIcon = this.add.image(618, 390, "key")
+        .setOrigin(0.5)
         .setScale(0.07)
         .setScrollFactor(0);
     }
   }
 
   showSecondKeyIndicator() {
-    if (!this.secondKeyIcon) {
-      // Posição da segunda chave no HUD, ao lado da primeira chave
-      this.secondKeyIcon = this.add.image(698, 390, "key")  // Ajustei X para 90 e Y para 90
-        .setOrigin(0.5)  // Centraliza a chave
+    if (!this.keyIcon02) {
+      // Posição da segunda chave no HUD
+      this.keyIcon02 = this.add.image(658, 390, "key")
+        .setOrigin(0.5)
+        .setScale(0.07)
+        .setScrollFactor(0);
+    }
+  }
+
+  showThirdKeyIndicator() {
+    if (!this.keyIcon03) {
+      // Posição da terceira chave no HUD
+      this.keyIcon03 = this.add.image(698, 390, "key")
+        .setOrigin(0.5)
         .setScale(0.07)
         .setScrollFactor(0);
     }
@@ -1438,24 +1455,24 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
         this.holeAnimationState++;
         this.holeSprite.setTexture(`buraco${this.holeAnimationState}`);
         
-        // When reaching the last animation frame, spawn the second key
-        if (this.holeAnimationState === 5 && !this.secondKeyItem) {
-          // Spawn the second key near the hole
-          this.secondKeyItem = this.physics.add.sprite(
+        // When reaching the last animation frame, spawn the third key
+        if (this.holeAnimationState === 5 && !this.keyItem03) {
+          // Spawn the third key near the hole
+          this.keyItem03 = this.physics.add.sprite(
             this.holeSprite.x + 50,
             this.holeSprite.y,
             "key"
           ).setScale(0.05);
 
-          // Add overlap detection for second key collection
+          // Add overlap detection for third key collection
           this.physics.add.overlap(
             this.player,
-            this.secondKeyItem,
+            this.keyItem03,
             () => {
-              if (!this.hasSecondKey) {  // Só coleta se ainda não tiver a chave
-                this.hasSecondKey = true;
-                this.secondKeyItem.destroy();
-                this.showSecondKeyIndicator();
+              if (!this.hasKey03) {  // Só coleta se ainda não tiver a chave
+                this.hasKey03 = true;
+                this.keyItem03.destroy();
+                this.showThirdKeyIndicator();
                 
                 // Esconde o buraco e desativa a interação
                 this.holeSprite.setVisible(false);
