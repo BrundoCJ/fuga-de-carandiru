@@ -324,9 +324,14 @@ class Hugo extends Bot {
   constructor(scene, x, y) {
     super(scene, x, y);
     this.sprite.setTexture("hugo_frente1");
-    this.sprite.setScale(0.2);
-    this.sprite.body.setSize(100, 200);  // Largura: 40, Altura: 80 (ajuste conforme necessário)
-    this.sprite.body.setOffset(10, 10)
+    this.sprite.setScale(0.19);
+    this.sprite.body.setSize(100, 290);  // Largura: 40, Altura: 80 (ajuste conforme necessário)
+    this.sprite.body.setOffset(60, 60)
+  }
+  playAnimIfNotPlaying(key) {
+    if (this.sprite.anims.currentAnim?.key !== key) {
+      this.sprite.anims.play(key, true);
+    }
   }
 
   // Sobrescrevendo o método die() para o bot Hugo
@@ -869,6 +874,48 @@ this.anims.create({
       frameRate: 8,
       repeat: -1,
     });
+
+    this.anims.create({
+  key: 'hugo_walk_down',
+  frames: [
+    { key: 'hugo_frente1' },
+    { key: 'hugo_frente2' },
+  ],
+  frameRate: 8,
+  repeat: -1
+});
+
+this.anims.create({
+  key: 'hugo_walk_up',
+  frames: [
+    { key: 'hugo_costas1' },
+    { key: 'hugo_costas2' },
+  ],
+  frameRate: 8,
+  repeat: -1
+});
+
+this.anims.create({
+  key: 'hugo_walk_left',
+  frames: [
+    { key: 'hugo_esquerda1' },
+    { key: 'hugo_esquerda2' },
+  ],
+  frameRate: 8,
+  repeat: -1
+});
+
+this.anims.create({
+  key: 'hugo_walk_right',
+  frames: [
+    { key: 'hugo_direita1' },
+    { key: 'hugo_direita2' },
+  ],
+  frameRate: 8,
+  repeat: -1
+});
+
+
 
     this.player = this.add.sprite(400, 300, "player_frente1");
     this.physics.add.existing(this.player);
