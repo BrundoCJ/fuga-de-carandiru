@@ -749,6 +749,7 @@ class MainScene extends Phaser.Scene {
     this.load.image("picanha_badge", "assets/picanha_luladra.png");
 
     this.load.image("hugo_frente1", "assets/hugo_frente1.png");
+    this.load.image("hugo_frente2", "assets/hugo_frente2.png");
 
     this.load.image("hugo_costas1", "assets/hugo_costas1.png");
     this.load.image("hugo_costas2", "assets/hugo_costas2.png");
@@ -1501,6 +1502,7 @@ addWeapon() {
     null,
     this
   );
+  this.weaponAvailable = true;  // Agora a arma está disponível
 }
 
 collectWeapon(weapon) {
