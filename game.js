@@ -1165,10 +1165,9 @@ this.time.addEvent({
       const formatted = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       this.timerText.setText(formatted);
     } else {
-      this.timerText.setText("00:00");
-      // Exemplo de ação ao fim do tempo:
-      // this.scene.restart();
-    }
+  this.timerText.setText("00:00");
+  location.reload(); // Reinicia a página
+}
   },
   callbackScope: this
 });
@@ -1489,7 +1488,8 @@ this.walls.push(barrier37);
         this.startChasingAllGuards(this.player);
 
         if (this.lives <= 0) {
-          this.scene.restart();
+          location.reload();
+
         }
 
         this.time.delayedCall(1500, () => {
