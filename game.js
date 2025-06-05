@@ -657,7 +657,7 @@ class MainScene extends Phaser.Scene {
       "Se precisar de ajuda, me chame.",
       "Nunca confie nas promessas dos outros.",
       "Lembre-se: aqui dentro, o tempo passa devagar.",
-      "A terceira chave está lá fora",
+      "Tem uma chave enterrada lá fora",
     ];
 
     this.guards = [];
@@ -1431,7 +1431,7 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
     if (this.holeInteractionEnabled && this.isNearHole && Phaser.Input.Keyboard.JustDown(this.cKey)) {
       if (this.holeAnimationState === 0) {
         // First interaction - show key message
-        this.showBotMessage(null, "A terceira chave está lá fora");
+        this.showBotMessage(null, "Tem uma chave enterrada lá fora");
         this.holeAnimationState = 1;
       } else if (this.holeAnimationState >= 1 && this.holeAnimationState < 5) {
         // Play next animation frame
@@ -1528,7 +1528,7 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
     }
 
     // Enable hole interaction if this is the specific message
-    if (message === "A terceira chave está lá fora") {
+    if (message === "Tem uma chave enterrada lá fora") {
       this.holeInteractionEnabled = true;
       this.holeSprite.setVisible(true);
     }
