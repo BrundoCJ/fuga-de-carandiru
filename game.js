@@ -686,6 +686,9 @@ class MainScene extends Phaser.Scene {
     this.hasBikeBadge = false;
     this.hasZeroBadge = false;
     this.hasPicanhaBadge = false;
+
+    this.remainingTime = 300; // 5 minutos em segundos
+    this.timerText = null;
   }
 
   preload() {
@@ -921,6 +924,18 @@ this.anims.create({
     // Ajustar visibilidade inicial
     this.updateHearts();
 
+    // === TIMER ao lado dos corações ===
+    this.timerText = this.add.text(
+      keyX + this.maxLives * (heartWidth + spacingBetweenHearts) + 550,
+      heartsBaseY + 323,
+      "05:00",
+      {
+        font: "16px Arial",
+        fill: "#ffffff",
+        padding: { x: 10, y: 3 }
+      }
+    ).setScrollFactor(0);
+
 
     // Definindo o zoom (2x)
     this.cameras.main.setZoom(2.5); //ALTERAR PARA 2.0 OU 2.5 DEPOIS (ALTEREI PARA FAZER AS BARREIRAS)
@@ -1036,6 +1051,26 @@ for (let i = 0; i < 1; i++) {
         this.bots.forEach((bot) => bot.setRandomVelocity());
       },
     });
+
+    // === Evento que decrementa o timer a cada segundo ===
+this.time.addEvent({
+  delay: 1000,
+  loop: true,
+  callback: () => {
+    if (this.remainingTime > 0) {
+      this.remainingTime--;
+      const minutes = Math.floor(this.remainingTime / 60);
+      const seconds = this.remainingTime % 60;
+      const formatted = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      this.timerText.setText(formatted);
+    } else {
+      this.timerText.setText("00:00");
+      // Exemplo de ação ao fim do tempo:
+      // this.scene.restart();
+    }
+  },
+  callbackScope: this
+});
 
     //BARREIRAS ==========================================================
 
