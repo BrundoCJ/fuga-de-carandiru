@@ -177,50 +177,78 @@ class Luladrao extends Bot {
     super(scene, x, y);
     this.sprite.setTexture("luladrao_frente1");
     this.sprite.setScale(0.2);
-    this.sprite.body.setSize(100, 200);  // Largura: 40, Altura: 80 (ajuste conforme necessário)
-    this.sprite.body.setOffset(10, 10)
+    this.sprite.body.setSize(100, 200);
+    this.sprite.body.setOffset(10, 10);
+    this.keyItem02 = null;
+    this.isDying = false; // Flag para prevenir múltiplas chamadas de die()
   }
 
-  // Sobrescrevendo o método die() para o bot Luladrao
   die() {
-    this.alive = false;  // Marca o Luladrao como morto
-    this.sprite.setVelocity(0, 0);
-    this.sprite.setTint(0xff6666);
-    this.sprite.setAlpha(0.5);
-    this.sprite.anims.stop();
-    this.healthBar.clear();
-    this.healthBar.setAlpha(0);
+    try {
+      if (this.isDying || !this.alive) return;
+      this.isDying = true;
 
-    // Posiciona o item (chave) no local do Luladrao morto
-    const picanhaBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "picanha_badge").setScale(0.08);
+      this.alive = false;
+      this.sprite.setVelocity(0, 0);
+      this.sprite.setTint(0xff6666);
+      this.sprite.setAlpha(0.5);
+      this.sprite.anims.stop();
+      this.healthBar.clear();
+      this.healthBar.setAlpha(0);
 
-    // Configura o overlap entre jogador e chave para coletar
-    this.scene.physics.add.overlap(
-      this.scene.player,
-      picanhaBadge,
-      () => {
-        this.scene.hasPicanhaBadge = true;  // Marca que o jogador tem a chave
-        picanhaBadge.destroy();  // Remove a chave do mapa
-        this.scene.showKeyIndicator = this.scene.add.image(1200, 350, "picanha_badge").setScale(0.1).setScrollFactor(0);  // Mostra a badge no HUD
-      },
-      null,
-      this.scene
-    );
+      // Posiciona o item (chave) no local do Luladrao morto
+      const picanhaBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "picanha_badge").setScale(0.08);
 
-    const keyItem02 = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "key").setScale(0.05);
+      // Configura o overlap entre jogador e badge para coletar
+      this.scene.physics.add.overlap(
+        this.scene.player,
+        picanhaBadge,
+        () => {
+          try {
+            if (!this.scene.hasPicanhaBadge && picanhaBadge && picanhaBadge.active) {
+              this.scene.hasPicanhaBadge = true;
+              picanhaBadge.destroy();
+              this.scene.showKeyIndicator = this.scene.add.image(1200, 350, "picanha_badge").setScale(0.1).setScrollFactor(0);
+              console.log('Badge coletada');
+            }
+          } catch (error) {
+            console.error('Erro ao coletar badge:', error);
+          }
+        },
+        null,
+        this.scene
+      );
 
-    // Configura o overlap entre jogador e chave para coletar
-    this.scene.physics.add.overlap(
-      this.scene.player,
-      keyItem02,
-      () => {
-        this.scene.hasKey02 = true;  // Marca que o jogador tem a chave
-        keyItem02.destroy();  // Remove a chave do mapa
-        this.scene.showSecondKeyIndicator();  // Mostra a chave no HUD
-      },
-      null,
-      this.scene
-    );
+      // Cria a segunda chave apenas se ela ainda não existir
+      if (!this.keyItem02 && !this.scene.hasKey02) {
+        this.keyItem02 = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "key").setScale(0.05);
+        this.scene.keyItems.add(this.keyItem02);
+
+        // Configura o overlap entre jogador e chave para coletar
+        this.scene.physics.add.overlap(
+          this.scene.player,
+          this.keyItem02,
+          () => {
+            try {
+              if (!this.scene.hasKey02 && this.keyItem02 && this.keyItem02.active) {
+                this.scene.hasKey02 = true;
+                this.keyItem02.destroy();
+                this.scene.keyItems.delete(this.keyItem02);
+                this.keyItem02 = null;
+                this.scene.updateKeyIndicators(); // Atualiza todos os indicadores
+                console.log('Segunda chave coletada');
+              }
+            } catch (error) {
+              console.error('Erro ao coletar segunda chave:', error);
+            }
+          },
+          null,
+          this.scene
+        );
+      }
+    } catch (error) {
+      console.error('Erro no método die do Luladrao:', error);
+    }
   }
 
   takeDamageFrom(player) {
@@ -709,6 +737,10 @@ class MainScene extends Phaser.Scene {
 
     this.remainingTime = 300; // 5 minutos em segundos
     this.timerText = null;
+
+    this.keyItems = new Set();
+    this.keyIndicators = new Set();
+    this.collectedKeys = []; // Array para controlar a ordem de coleta
   }
 
   preload() {
@@ -1399,15 +1431,25 @@ this.walls.push(barrier37);
     });
      const pos = this.getRandomKeyPosition();
   this.keyItem = this.physics.add.sprite(pos.x, pos.y, "key").setScale(0.05);
+  this.keyItems.add(this.keyItem);
 
   // Configura o overlap entre jogador e chave para coletar
     this.physics.add.overlap(
       this.player,
       this.keyItem,
       () => {
-        this.hasKey = true;
-        this.keyItem.destroy(); // remove a chave do mapa
-        this.showKeyIndicator();
+        try {
+          if (!this.hasKey && this.keyItem && this.keyItem.active) {
+            this.hasKey = true;
+            this.keyItem.destroy();
+            this.keyItems.delete(this.keyItem);
+            this.keyItem = null;
+            this.updateKeyIndicators(); // Atualiza todos os indicadores
+            console.log('Primeira chave coletada');
+          }
+        } catch (error) {
+          console.error('Erro ao coletar primeira chave:', error);
+        }
       },
       null,
       this
@@ -1417,6 +1459,8 @@ this.walls.push(barrier37);
     this.holeSprite = this.physics.add.sprite(1820, 160, 'buraco1').setScale(0.3);
     this.holeSprite.setImmovable(true);
     this.holeSprite.setVisible(false);
+    this.holeSprite.setDepth(0); // buraco fica no fundo
+    this.player.setDepth(1);     // personagem fica acima
     
     // Add C key
     this.cKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
@@ -1439,34 +1483,16 @@ this.walls.push(barrier37);
     );
   }
 
-  showKeyIndicator() {
-    if (!this.keyIcon) {
-      // Posição da primeira chave no HUD
-      this.keyIcon = this.add.image(618, 390, "key")
-        .setOrigin(0.5)
-        .setScale(0.07)
-        .setScrollFactor(0);
-    }
-  }
+  updateKeyIndicators() {
+    // Remove ícones antigos
+    if (this.keyIcon) { this.keyIcon.destroy(); this.keyIcon = null; }
+    if (this.keyIcon02) { this.keyIcon02.destroy(); this.keyIcon02 = null; }
+    if (this.keyIcon03) { this.keyIcon03.destroy(); this.keyIcon03 = null; }
 
-  showSecondKeyIndicator() {
-    if (!this.keyIcon02) {
-      // Posição da segunda chave no HUD
-      this.keyIcon02 = this.add.image(658, 390, "key")
-        .setOrigin(0.5)
-        .setScale(0.07)
-        .setScrollFactor(0);
-    }
-  }
-
-  showThirdKeyIndicator() {
-    if (!this.keyIcon03) {
-      // Posição da terceira chave no HUD
-      this.keyIcon03 = this.add.image(698, 390, "key")
-        .setOrigin(0.5)
-        .setScale(0.07)
-        .setScrollFactor(0);
-    }
+    // Adiciona ícones conforme as chaves coletadas
+    if (this.hasKey) this.keyIcon = this.add.image(618, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0);
+    if (this.hasKey02) this.keyIcon02 = this.add.image(658, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0);
+    if (this.hasKey03) this.keyIcon03 = this.add.image(698, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0);
   }
 
   startChasingAllGuards(player) {
@@ -1610,8 +1636,7 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
     // Handle hole interaction (only if enabled)
     if (this.holeInteractionEnabled && this.isNearHole && Phaser.Input.Keyboard.JustDown(this.cKey)) {
       if (this.holeAnimationState === 0) {
-        // First interaction - show key message
-        this.showBotMessage(null, "Tem uma chave enterrada lá fora");
+        // Apenas inicia a animação, sem mostrar a frase novamente
         this.holeAnimationState = 1;
       } else if (this.holeAnimationState >= 1 && this.holeAnimationState < 5) {
         // Play next animation frame
@@ -1635,7 +1660,7 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
               if (!this.hasKey03) {  // Só coleta se ainda não tiver a chave
                 this.hasKey03 = true;
                 this.keyItem03.destroy();
-                this.showThirdKeyIndicator();
+                this.updateKeyIndicators();
                 
                 // Esconde o buraco e desativa a interação
                 this.holeSprite.setVisible(false);
