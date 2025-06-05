@@ -340,7 +340,7 @@ class Hugo extends Bot {
     this.healthBar.setAlpha(0);
 
     // Posiciona o item (ZeroBadge) no local do Hugo morto
-    const ZeroBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "zero_badge").setScale(0.05);
+    const ZeroBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "zero_badge").setScale(0.8);
     
     // Configura o overlap entre jogador e badge para coletar
     this.scene.physics.add.overlap(
@@ -351,8 +351,8 @@ class Hugo extends Bot {
         ZeroBadge.destroy();  // Remove a badge do mapa
 
         // !=================== !AJUSTAR POSIÇÃO DA BADGE (apenas a primeira variável "958 atualmente")! ===================!
-        this.scene.showKeyIndicator = this.scene.add.image(958, 390, "zero_badge").setScale(0.07).setScrollFactor(0);  // Mostra a badge no HUD
-      },
+        this.scene.showKeyIndicator = this.scene.add.image(1300, 350, "zero_badge").setScale(0.6).setScrollFactor(0);  // Mostra a badge no HUD
+      }, //AJUSTADO!!!
       null,
       this.scene
     );
@@ -736,6 +736,18 @@ class MainScene extends Phaser.Scene {
     this.load.image("luladrao_direita1", "assets/luladrao_direita1.png");
     this.load.image("luladrao_direita2", "assets/luladrao_direita2.png");
 
+    this.load.image("hugo_frente1", "assets/hugo_frente1.png");
+
+    this.load.image("hugo_costas1", "assets/hugo_costas1.png");
+    this.load.image("hugo_costas2", "assets/hugo_costas2.png");
+    
+    this.load.image("hugo_direita1", "assets/hugo_direita1.png");
+    this.load.image("hugo_direita2", "assets/hugo_direita2.png");
+
+    this.load.image("hugo_esquerda1", "assets/hugo_esquerda1.png");
+    this.load.image("hugo_esquerda2", "assets/hugo_esquerda2.png");
+
+    this.load.image("zero_badge", "assets/zero_badge.png");
     // Load hole animation frames
     for (let i = 1; i <= 5; i++) {
       this.load.image(`buraco${i}`, `assets/buraco${i}.png`);

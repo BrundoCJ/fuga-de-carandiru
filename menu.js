@@ -14,9 +14,15 @@ class MenuScene extends Phaser.Scene {
 
     this.load.audio('click', 'assets/clickMouse.mp3');
 
+    this.load.audio('musicaJogo', 'assets/musicaJogo.mp3');
   }
 
-  create() {
+  create() {  
+     //  Toca a música
+    if (!this.sound.get('musicaJogo')) {
+    this.musicaJogo = this.sound.add('musicaJogo', { loop: true, volume: 0.5 });
+    this.musicaJogo.play();
+}
     const { width, height } = this.scale;
 
     // Tela de fundo inicial
