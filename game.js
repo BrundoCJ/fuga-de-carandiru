@@ -192,8 +192,23 @@ class Luladrao extends Bot {
     this.healthBar.setAlpha(0);
 
     // Posiciona o item (chave) no local do Luladrao morto
+    const picanhaBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "picanha_badge").setScale(0.08);
+
+    // Configura o overlap entre jogador e chave para coletar
+    this.scene.physics.add.overlap(
+      this.scene.player,
+      picanhaBadge,
+      () => {
+        this.scene.hasPicanhaBadge = true;  // Marca que o jogador tem a chave
+        picanhaBadge.destroy();  // Remove a chave do mapa
+        this.scene.showKeyIndicator = this.scene.add.image(1200, 350, "picanha_badge").setScale(0.1).setScrollFactor(0);  // Mostra a badge no HUD
+      },
+      null,
+      this.scene
+    );
+
     const keyItem02 = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "key").setScale(0.05);
-    
+
     // Configura o overlap entre jogador e chave para coletar
     this.scene.physics.add.overlap(
       this.scene.player,
@@ -345,7 +360,7 @@ class Hugo extends Bot {
     this.healthBar.setAlpha(0);
 
     // Posiciona o item (ZeroBadge) no local do Hugo morto
-    const ZeroBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "zero_badge").setScale(0.8);
+    const ZeroBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "zero_badge").setScale(0.5);
     
     // Configura o overlap entre jogador e badge para coletar
     this.scene.physics.add.overlap(
@@ -744,7 +759,7 @@ class MainScene extends Phaser.Scene {
     this.load.image("luladrao_direita1", "assets/luladrao_direita1.png");
     this.load.image("luladrao_direita2", "assets/luladrao_direita2.png");
 
-    this.load.image("picanha_badge", "assets/picanha_luladra.png");
+    this.load.image("picanha_badge", "assets/picanha_badge.png");
 
     this.load.image("hugo_frente1", "assets/hugo_frente1.png");
 
