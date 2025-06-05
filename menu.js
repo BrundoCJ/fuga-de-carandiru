@@ -20,7 +20,7 @@ class MenuScene extends Phaser.Scene {
   create() {  
      //  Toca a música
     if (!this.sound.get('musicaJogo')) {
-    this.musicaJogo = this.sound.add('musicaJogo', { loop: true, volume: 0.5 });
+    this.musicaJogo = this.sound.add('musicaJogo', { loop: true, volume: 0.3 });
     this.musicaJogo.play();
 }
     const { width, height } = this.scale;
