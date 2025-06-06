@@ -794,6 +794,7 @@ class MainScene extends Phaser.Scene {
     this.load.image("picanha_badge", "assets/picanha_badge.png");
 
     this.load.image("hugo_frente1", "assets/hugo_frente1.png");
+    this.load.image("hugo_frente2", "assets/hugo_frente1.png");
 
     this.load.image("hugo_costas1", "assets/hugo_costas1.png");
     this.load.image("hugo_costas2", "assets/hugo_costas2.png");
@@ -1569,7 +1570,7 @@ this.walls.push(barrier37);
   }
 
   update() {
-    const speed = 120; //ALTERAR PARA 100 (MUDEI P FZR AS BARREIRAS)
+    const speed = 200; //ALTERAR PARA 100 (MUDEI P FZR AS BARREIRAS)
     this.player.body.setVelocity(0);
 
     // ── MOVIMENTAÇÃO: setas OU WASD ──
