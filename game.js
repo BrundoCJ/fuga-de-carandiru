@@ -739,7 +739,7 @@ class MainScene extends Phaser.Scene {
     this.hasZeroBadge = false;
     this.hasPicanhaBadge = false;
 
-    this.remainingTime = 300; // 5 minutos em segundos
+    this.remainingTime = 300; // 5 minutos em segundos TEMPO
     this.timerText = null;
 
     this.keyItems = new Set();
@@ -854,11 +854,14 @@ class MainScene extends Phaser.Scene {
 
   create() {
 
+    // Acessa a música que foi carregada no MenuScene
+    this.musicaJogo = this.sound.get('musicaJogo'); // A música já foi carregada no MenuScene
+
     // Cria o sprite de tela vermelha (transparente inicialmente)
-  this.redScreen = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0xff0000)
-  .setOrigin(0, 0)  // Coloca a origem no canto superior esquerdo
-  .setAlpha(0)      // Começa invisível
-  .setDepth(10);    // Coloca acima de tudo na cena
+    this.redScreen = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0xff0000)
+    .setOrigin(0, 0)  // Coloca a origem no canto superior esquerdo
+    .setAlpha(0)      // Começa invisível
+    .setDepth(10);    // Coloca acima de tudo na cena
 
     this.somSoco = this.sound.add('somSoco');
     this.picanha = this.sound.add('picanha');
@@ -1666,9 +1669,20 @@ this.walls.push(barrier37);
   }
 
   update() {
+// Acelera a música quando o jogador estiver com 1 coração ou quando o tempo for menor que 1 minuto
+if (this.lives === 1 || this.remainingTime <= 60) {
+  if (this.musicaJogo && this.musicaJogo.rate !== 1.5) {
+    this.musicaJogo.setRate(1.5);  // Acelera a música para 1.5x
+  }
+} else {
+  if (this.musicaJogo && this.musicaJogo.rate !== 1) {
+    this.musicaJogo.setRate(1);  // Reseta a música para a velocidade normal
+  }
+}
+
 
     // Se o jogador estiver com 1 coração, faça a tela piscar
-if (this.lives === 1) {
+  if (this.lives === 1) {
   if (this.redScreen.alpha === 0) {
     // Aumenta a opacidade para 1 (vermelho suave)
     this.tweens.add({
