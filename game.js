@@ -741,6 +741,13 @@ class MainScene extends Phaser.Scene {
     this.keyItems = new Set();
     this.keyIndicators = new Set();
     this.collectedKeys = []; // Array para controlar a ordem de coleta
+
+    // Add escape related properties
+    this.escapeEnabled = false;
+    this.escapeSprite = null;
+    this.escapeInteractionText = null;
+    this.isNearEscape = false;
+    this.escapePosition = { x: 1820, y: 160 }; // Posição inicial da saída (será ajustada posteriormente)
   }
 
   preload() {
@@ -824,6 +831,7 @@ class MainScene extends Phaser.Scene {
     for (let i = 1; i <= 5; i++) {
       this.load.image(`buraco${i}`, `assets/buraco${i}.png`);
     }
+    this.load.image("portaFuga", "assets/portaFuga.png");
   }
 
   create() {
@@ -1494,6 +1502,58 @@ this.walls.push(barrier37);
     if (this.hasKey) this.keyIcon = this.add.image(618, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0);
     if (this.hasKey02) this.keyIcon02 = this.add.image(658, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0);
     if (this.hasKey03) this.keyIcon03 = this.add.image(698, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0);
+
+    // Verifica se tem todas as chaves para habilitar a fuga
+    if (this.hasKey && this.hasKey02 && this.hasKey03 && !this.escapeEnabled) {
+      this.enableEscape();
+    }
+  }
+
+  enableEscape() {
+    this.escapeEnabled = true;
+    
+    // Cria o sprite da saída
+    this.escapeSprite = this.physics.add.sprite(this.escapePosition.x, this.escapePosition.y, 'buraco5').setScale(0.3);
+    this.escapeSprite.setImmovable(true);
+    this.escapeSprite.setVisible(true);
+    this.escapeSprite.setDepth(0);
+
+    // Cria o texto de interação
+    this.escapeInteractionText = this.add.text(0, 0, 'Pressione C para fugir', {
+      font: '16px Arial',
+      fill: '#ffffff',
+      backgroundColor: '#000000',
+      padding: { x: 5, y: 3 }
+    }).setOrigin(0.5).setVisible(false);
+
+    // Adiciona overlap para detectar quando o jogador está perto da saída
+    this.physics.add.overlap(
+      this.player,
+      this.escapeSprite,
+      this.handleEscapeOverlap,
+      null,
+      this
+    );
+  }
+
+  handleEscapeOverlap(player, escape) {
+    if (!this.escapeEnabled) return;
+
+    const dist = Phaser.Math.Distance.Between(
+      player.x,
+      player.y,
+      escape.x,
+      escape.y
+    );
+    
+    if (dist < 50) {
+      this.isNearEscape = true;
+      this.escapeInteractionText.setPosition(escape.x, escape.y - 40);
+      this.escapeInteractionText.setVisible(true);
+    } else {
+      this.isNearEscape = false;
+      this.escapeInteractionText.setVisible(false);
+    }
   }
 
   startChasingAllGuards(player) {
@@ -1680,6 +1740,34 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
     // Update hole interaction text position if visible
     if (this.holeInteractionText.visible) {
       this.holeInteractionText.setPosition(this.holeSprite.x, this.holeSprite.y - 40);
+    }
+
+    // Handle escape interaction
+    if (this.escapeEnabled && this.isNearEscape && Phaser.Input.Keyboard.JustDown(this.cKey)) {
+      // Esconde o player
+      this.player.setVisible(false);
+      
+      // Esconde todos os bots e guardas
+      this.bots.forEach(bot => {
+        if (bot.sprite) bot.sprite.setVisible(false);
+      });
+
+      // Mostra a imagem de vitória
+      const victoryImage = this.add.image(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        'portaFuga'
+      ).setScale(0.5).setScrollFactor(0);
+
+      // Reinicia o jogo após 5 segundos
+      this.time.delayedCall(5000, () => {
+        location.reload();
+      });
+    }
+
+    // Update escape interaction text position if visible
+    if (this.escapeInteractionText && this.escapeInteractionText.visible) {
+      this.escapeInteractionText.setPosition(this.escapeSprite.x, this.escapeSprite.y - 40);
     }
 
     this.bots.forEach((bot) => {
