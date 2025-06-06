@@ -209,6 +209,7 @@ class Luladrao extends Bot {
               this.scene.hasPicanhaBadge = true;
               picanhaBadge.destroy();
               this.scene.showKeyIndicator = this.scene.add.image(1200, 350, "picanha_badge").setScale(0.1).setScrollFactor(0);
+              this.scene.badgeIcons.picanha.setAlpha(1);  // Torna o ícone visível
               console.log('Badge coletada');
             }
           } catch (error) {
@@ -236,6 +237,7 @@ class Luladrao extends Bot {
                 this.scene.keyItems.delete(this.keyItem02);
                 this.keyItem02 = null;
                 this.scene.updateKeyIndicators(); // Atualiza todos os indicadores
+                this.scene.keyIcons.key2.setAlpha(1);  // Torna o ícone da chave 2 visível
                 console.log('Segunda chave coletada');
               }
             } catch (error) {
@@ -317,6 +319,7 @@ class Moreno extends Bot {
       () => {
         this.scene.hasBikeBadge = true;  // Marca que o jogador tem a badge
         BikeBadge.destroy();  // Remove a badge do mapa
+        this.scene.badgeIcons.bike.setAlpha(1);  // Torna o ícone visível
 
         // !=================== !AJUSTAR POSIÇÃO DA BADGE (apenas a primeira variável "958 atualmente")! ===================!
         this.scene.showKeyIndicator = this.scene.add.image(1250, 350, "bike_badge").setScale(0.05).setScrollFactor(0);  // Mostra a badge no HUD
@@ -397,6 +400,7 @@ class Hugo extends Bot {
       () => {
         this.scene.hasZeroBadge = true;  // Marca que o jogador tem a badge
         ZeroBadge.destroy();  // Remove a badge do mapa
+        this.scene.badgeIcons.zero.setAlpha(1);  // Torna o ícone visível
 
         // !=================== !AJUSTAR POSIÇÃO DA BADGE (apenas a primeira variável "958 atualmente")! ===================!
         this.scene.showKeyIndicator = this.scene.add.image(1300, 350, "zero_badge").setScale(0.6).setScrollFactor(0);  // Mostra a badge no HUD
@@ -748,6 +752,20 @@ class MainScene extends Phaser.Scene {
     this.escapeInteractionText = null;
     this.isNearEscape = false;
     this.escapePosition = { x: 1820, y: 160 }; // Posição inicial da saída (será ajustada posteriormente)
+
+    this.badgeIcons = {
+    picanha: null,
+    bike: null,
+    zero: null,
+};
+
+    this.keyIcons = {
+    key1: null,
+    key2: null,
+    key3: null,
+};
+
+
   }
 
   preload() {
@@ -835,6 +853,13 @@ class MainScene extends Phaser.Scene {
   }
 
   create() {
+
+    // Cria o sprite de tela vermelha (transparente inicialmente)
+  this.redScreen = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0xff0000)
+  .setOrigin(0, 0)  // Coloca a origem no canto superior esquerdo
+  .setAlpha(0)      // Começa invisível
+  .setDepth(10);    // Coloca acima de tudo na cena
+
     this.somSoco = this.sound.add('somSoco');
     this.picanha = this.sound.add('picanha');
     // Adiciona o map.png cobrindo toda a tela
@@ -1092,6 +1117,16 @@ this.anims.create({
         padding: { x: 10, y: 3 }
       }
     ).setScrollFactor(0);
+
+    // Adiciona os três badges no HUD com transparência
+    this.badgeIcons.picanha = this.add.image(1200, 350, "picanha_badge").setScale(0.1).setScrollFactor(0).setAlpha(0.3);
+    this.badgeIcons.bike = this.add.image(1250, 350, "bike_badge").setScale(0.05).setScrollFactor(0).setAlpha(0.3);
+    this.badgeIcons.zero = this.add.image(1300, 350, "zero_badge").setScale(0.6).setScrollFactor(0).setAlpha(0.3);
+
+    // Adiciona os ícones das chaves no HUD com transparência
+    this.keyIcons.key1 = this.add.image(618, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0).setAlpha(0.3);
+    this.keyIcons.key2 = this.add.image(658, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0).setAlpha(0.3);
+    this.keyIcons.key3 = this.add.image(698, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0).setAlpha(0.3);
 
 
     // Definindo o zoom (2x)
@@ -1454,6 +1489,7 @@ this.walls.push(barrier37);
             this.keyItems.delete(this.keyItem);
             this.keyItem = null;
             this.updateKeyIndicators(); // Atualiza todos os indicadores
+            this.scene.keyIcons.key1.setAlpha(1);  // Torna o ícone da chave 1 visível
             console.log('Primeira chave coletada');
           }
         } catch (error) {
@@ -1630,6 +1666,21 @@ this.walls.push(barrier37);
   }
 
   update() {
+
+    // Se o jogador estiver com 1 coração, faça a tela piscar
+if (this.lives === 1) {
+  if (this.redScreen.alpha === 0) {
+    // Aumenta a opacidade para 1 (vermelho suave)
+    this.tweens.add({
+      targets: this.redScreen,
+      alpha: 0.5,  // Cor vermelha com 50% de opacidade
+      duration: 500,  // A duração do efeito de transição (em milissegundos)
+      yoyo: true,    // Faz com que a animação volte para o estado inicial
+      repeat: -1,    // Repete infinitamente
+    });
+  }
+}
+
     const speed = 200; //ALTERAR PARA 100 (MUDEI P FZR AS BARREIRAS)
     this.player.body.setVelocity(0);
 
@@ -1721,6 +1772,7 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
               if (!this.hasKey03) {  // Só coleta se ainda não tiver a chave
                 this.hasKey03 = true;
                 this.keyItem03.destroy();
+                //this.scene.keyIcons.key3.setAlpha(1);  // Torna o ícone da chave 3 visível 
                 this.updateKeyIndicators();
                 
                 // Esconde o buraco e desativa a interação
