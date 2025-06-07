@@ -12,7 +12,7 @@ class Bot {
     this.sprite.body.setSize(30, 70);
     this.sprite.body.setOffset(15, 10);
 
-    this.maxHealth = 30;
+    this.maxHealth = 15; // Reduzido de 30 para 15
     this.health = this.maxHealth;
     this.alive = true;
 
@@ -766,7 +766,8 @@ class MainScene extends Phaser.Scene {
     key3: null,
 };
 
-
+    this.attackCooldown = false; // Novo: cooldown para ataque
+    this.attackCooldownTime = 700; // Novo: tempo do cooldown em ms (1 segundo)
   }
 
   preload() {
@@ -1748,7 +1749,8 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
       });
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.zKey)) {
+    if (Phaser.Input.Keyboard.JustDown(this.zKey) && !this.attackCooldown) {
+      this.attackCooldown = true; // Ativa o cooldown
       this.bots.forEach((bot) => {
         const dist = Phaser.Math.Distance.Between(
           this.player.x,
@@ -1758,8 +1760,13 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
         );
         if (dist < 50) {
           bot.takeDamageFrom(this.player);
-          this.somSoco.play(); //TOCA O SOM AQUII
+          this.somSoco.play();
         }
+      });
+      
+      // Reseta o cooldown após o tempo definido
+      this.time.delayedCall(this.attackCooldownTime, () => {
+        this.attackCooldown = false;
       });
     }
 
