@@ -18,11 +18,11 @@ class MenuScene extends Phaser.Scene {
   }
 
   create() {  
-     //  Toca a música
+    //  Toca a música
     if (!this.sound.get('musicaJogo')) {
-    this.musicaJogo = this.sound.add('musicaJogo', { loop: true, volume: 0.2 }); // configura a altura da musica 
-    this.musicaJogo.play();
-}
+      this.musicaJogo = this.sound.add('musicaJogo', { loop: true, volume: 0.2 });
+      this.musicaJogo.play();
+    }
     const { width, height } = this.scale;
 
     // Tela de fundo inicial
@@ -44,10 +44,19 @@ class MenuScene extends Phaser.Scene {
       ease: 'Sine.easeInOut'
     });
 
+    // Configuração das teclas
+    this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
     // Quando o botão START for clicado
     start.setInteractive({ cursor: 'pointer' });
     start.on('pointerdown', () => {
-      this.sound.play('click'); // toca o som ok
+      this.handleStartClick();
+    });
+
+    // Função para lidar com o clique no START
+    this.handleStartClick = () => {
+      this.sound.play('click');
       title.setVisible(false);
       start.setVisible(false);
       bg.setVisible(false);
@@ -68,7 +77,12 @@ class MenuScene extends Phaser.Scene {
 
       // Quando o botão NEW GAME for clicado
       newGameBtn.on('pointerdown', () => {
-        this.sound.play('click'); //toca o som dnv
+        this.handleNewGameClick();
+      });
+
+      // Função para lidar com o clique no NEW GAME
+      this.handleNewGameClick = () => {
+        this.sound.play('click');
         gameBg.setVisible(false);
         newGameBtn.setVisible(false);
 
@@ -77,18 +91,55 @@ class MenuScene extends Phaser.Scene {
 
         video.once('play', () => {
           video.setDisplaySize(width, height);
-          video.setDepth(1000); // Garante que o vídeo fique acima de tudo
+          video.setDepth(1000);
         });
 
-        video.play(false); // Reproduz o vídeo
+        video.play(false);
 
-        // Ação ao finalizar o vídeo
         video.once('complete', () => {
-          video.destroy(); // Remove o vídeo da tela
-          this.scene.start('MainScene'); // Inicia a MainScene que está em game.js
+          video.destroy();
+          this.scene.start('MainScene');
         });
+      };
+
+      // Adiciona eventos de teclado para o NEW GAME
+      this.input.keyboard.on('keydown-SPACE', () => {
+        if (newGameBtn.visible) {
+          this.handleNewGameClick();
+        }
       });
+
+      this.input.keyboard.on('keydown-ENTER', () => {
+        if (newGameBtn.visible) {
+          this.handleNewGameClick();
+        }
+      });
+    };
+
+    // Adiciona o evento de teclado para o START
+    this.input.keyboard.on('keydown-SPACE', () => {
+      if (start.visible) {
+        this.handleStartClick();
+      }
     });
+
+    this.input.keyboard.on('keydown-ENTER', () => {
+      if (start.visible) {
+        this.handleStartClick();
+      }
+    });
+  }
+
+  update() {
+    // Verifica se as teclas foram pressionadas
+    if (this.spaceKey.isDown || this.enterKey.isDown) {
+      if (this.scene.isActive('MenuScene')) {
+        const start = this.children.list.find(child => child.texture && child.texture.key === 'start');
+        if (start && start.visible) {
+          this.handleStartClick();
+        }
+      }
+    }
   }
 }
 

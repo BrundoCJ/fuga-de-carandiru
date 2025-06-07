@@ -5,9 +5,10 @@ class Bot {
     this.sprite.setScale(0.5);
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setBounce(0);
+    this.sprite.setDrag(1000); // Adiciona resistência ao movimento
+    this.sprite.setDamping(true); // Habilita amortecimento
+    this.sprite.setMaxVelocity(50); // Reduz a velocidade máxima
     
-    
-
     this.sprite.body.setSize(30, 70);
     this.sprite.body.setOffset(15, 10);
 
@@ -33,8 +34,8 @@ class Bot {
       this.sprite.setVelocity(0, 0);
       return;
     }
-    const vx = Phaser.Math.Between(-50, 50);
-    const vy = Phaser.Math.Between(-50, 50);
+    const vx = Phaser.Math.Between(-30, 30); // Reduz a velocidade aleatória
+    const vy = Phaser.Math.Between(-30, 30); // Reduz a velocidade aleatória
     this.sprite.setVelocity(vx, vy);
   }
 
@@ -1260,7 +1261,7 @@ this.time.addEvent({
       this.timerText.setText(formatted);
     } else {
   this.timerText.setText("00:00");
-  location.reload(); // Reinicia a página
+  window.location.reload(); // Reinicia a página
 }
   },
   callbackScope: this
@@ -1507,8 +1508,11 @@ this.walls.push(barrier37);
     this.holeSprite = this.physics.add.sprite(1820, 160, 'buraco1').setScale(0.3);
     this.holeSprite.setImmovable(true);
     this.holeSprite.setVisible(false);
-    this.holeSprite.setDepth(0); // buraco fica no fundo
-    this.player.setDepth(1);     // personagem fica acima
+    this.holeSprite.setDepth(0); // Buraco fica na camada base
+    this.player.setDepth(2);     // Personagem fica acima do buraco
+    this.bots.forEach(bot => {
+      if (bot.sprite) bot.sprite.setDepth(2); // Todos os bots ficam acima do buraco
+    });
     
     // Add C key
     this.cKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
@@ -1629,7 +1633,7 @@ this.walls.push(barrier37);
         this.startChasingAllGuards(this.player);
 
         if (this.lives <= 0) {
-          location.reload();
+          window.location.reload();
 
         }
 
@@ -1810,6 +1814,12 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
 
     // Handle escape interaction
     if (this.escapeEnabled && this.isNearEscape && Phaser.Input.Keyboard.JustDown(this.cKey)) {
+      // Remove completamente a tela vermelha
+      if (this.redScreen) {
+        this.redScreen.destroy();
+        this.redScreen = null;
+      }
+      
       // Esconde o player
       this.player.setVisible(false);
       
@@ -1825,10 +1835,13 @@ if (this.cursors.left.isDown || this.aKey.isDown) {
         'portaFuga'
       ).setScale(0.5).setScrollFactor(0);
 
+      console.log('Iniciando contagem regressiva para reiniciar...');
+      
       // Reinicia o jogo após 5 segundos
-      this.time.delayedCall(5000, () => {
-        location.reload();
-      });
+      setTimeout(() => {
+        console.log('Reiniciando o jogo...');
+        document.location.href = document.location.href;
+      }, 5000);
     }
 
     // Update escape interaction text position if visible
