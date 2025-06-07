@@ -1742,7 +1742,7 @@ class MainScene extends Phaser.Scene {
       }
     }
 
-    const speed = 200; //ALTERAR PARA 100 (MUDEI P FZR AS BARREIRAS)
+    const speed = 100; //ALTERAR PARA 100 (MUDEI P FZR AS BARREIRAS)
     this.player.body.setVelocity(0);
 
     // ── MOVIMENTAÇÃO: setas OU WASD ──
