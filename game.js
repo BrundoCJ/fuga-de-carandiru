@@ -329,13 +329,13 @@ class Moreno extends Bot {
       this.scene
     );
   }
-// !=========================================== !ADICIONAR SOM DO MORENO! ===========================================!
-//   takeDamageFrom(player) {
-//   super.takeDamageFrom(player);
-//   if (this.scene.picanha && !this.scene.picanha.isPlaying) {
-//     this.scene.picanha.play();
-//   }
-// }
+ // !=========================================== !ADICIONAR SOM DO MORENO!===========================================!
+   takeDamageFrom(player) {
+   super.takeDamageFrom(player);
+   if (this.scene.aow && !this.scene.aow.isPlaying) {
+     this.scene.aow.play();
+   }
+ }
 
 
   updateAnimation() {
@@ -805,6 +805,8 @@ class MainScene extends Phaser.Scene {
     
     this.load.audio('picanha', 'assets/picanha.mp3');
 
+    this.load.audio('aow', 'assets/aow.mp3');
+
 
     this.load.image("luladrao_frente1", "assets/luladrao_frente1.png");
     this.load.image("luladrao_frente2", "assets/luladrao_frente2.png");
@@ -867,6 +869,7 @@ class MainScene extends Phaser.Scene {
 
     this.somSoco = this.sound.add('somSoco');
     this.picanha = this.sound.add('picanha');
+    this.aow = this.sound.add('aow');
     // Adiciona o map.png cobrindo toda a tela
     this.add
       .image(0, 0, "map")
