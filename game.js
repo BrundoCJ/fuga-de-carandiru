@@ -1650,42 +1650,43 @@ class MainScene extends Phaser.Scene {
 
   handlePlayerGuardCollision(playerSprite, botSprite) {
     const bot = this.bots.find((b) => b.sprite === botSprite);
-    if (bot instanceof Guarda || (bot instanceof Bot && bot.angry)) {
-      if (!this.playerInvincible) {
-        if (bot instanceof Bot && bot.hitsDealt >= bot.maxHits) {
-          // Bot já bateu 3x, para de perseguir e volta a andar aleatoriamente
-          bot.angry = false;
-          bot.chaseTarget = null;
-          bot.setRandomVelocity();
-          return; // Não causa mais dano
+    
+    if (bot instanceof Bot || bot instanceof Luladrao || bot instanceof Hugo || bot instanceof Moreno) {
+        if (!this.playerInvincible) {
+            if (bot instanceof Bot && bot.hitsDealt >= bot.maxHits) {
+                // Bot já bateu 3x, para de perseguir e volta a andar aleatoriamente
+                bot.angry = false;
+                bot.chaseTarget = null;
+                bot.setRandomVelocity();
+                return; // Não causa mais dano
+            }
+
+            // Se o bot for um Guarda ou outro bot, começa a perseguição
+            if (bot instanceof Guarda || bot instanceof Bot) {
+                bot.startChasing(this.player); // Inicia a perseguição do bot
+            }
+
+            this.playerInvincible = true;
+
+            this.lives -= 1; // Linha add: Subtrai a vida
+            this.updateHearts(); // Linha add2: Atualiza os corações na tela
+
+            if (bot instanceof Bot) {
+                bot.hitsDealt++;
+            }
+
+            this.startChasingAllGuards(this.player);
+
+            if (this.lives <= 0) {
+                window.location.reload();
+            }
+
+            this.time.delayedCall(1500, () => {
+                this.playerInvincible = false;
+            });
         }
-        if (bot instanceof Guarda) {
-          bot.startChasing(this.player);
-        }
-
-        this.playerInvincible = true;
-
-        this.lives -= 1; //linha add
-        this.updateHearts(); //linha add2
-
-
-        if (bot instanceof Bot) {
-          bot.hitsDealt++;
-        }
-
-        this.startChasingAllGuards(this.player);
-
-        if (this.lives <= 0) {
-          window.location.reload();
-
-        }
-
-        this.time.delayedCall(1500, () => {
-          this.playerInvincible = false;
-        });
-      }
     }
-  }
+}
 
   // Método para atualizar quais corações aparecem
   updateHearts() {
