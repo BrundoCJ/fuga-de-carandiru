@@ -104,7 +104,6 @@ class Bot {
     }
   }
 
-
   startChasing(target) {
     this.angry = true;
     this.chaseTarget = target;
@@ -198,7 +197,9 @@ class Luladrao extends Bot {
       this.healthBar.setAlpha(0);
 
       // Posiciona o item (chave) no local do Luladrao morto
-      const picanhaBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "picanha_badge").setScale(0.08);
+      const picanhaBadge = this.scene.physics.add
+        .sprite(this.sprite.x, this.sprite.y, "picanha_badge")
+        .setScale(0.08);
 
       // Configura o overlap entre jogador e badge para coletar
       this.scene.physics.add.overlap(
@@ -206,15 +207,22 @@ class Luladrao extends Bot {
         picanhaBadge,
         () => {
           try {
-            if (!this.scene.hasPicanhaBadge && picanhaBadge && picanhaBadge.active) {
+            if (
+              !this.scene.hasPicanhaBadge &&
+              picanhaBadge &&
+              picanhaBadge.active
+            ) {
               this.scene.hasPicanhaBadge = true;
               picanhaBadge.destroy();
-              this.scene.showKeyIndicator = this.scene.add.image(1200, 350, "picanha_badge").setScale(0.1).setScrollFactor(0);
-              this.scene.badgeIcons.picanha.setAlpha(1);  // Torna o ícone visível
-              console.log('Badge coletada');
+              this.scene.showKeyIndicator = this.scene.add
+                .image(1200, 350, "picanha_badge")
+                .setScale(0.1)
+                .setScrollFactor(0);
+              this.scene.badgeIcons.picanha.setAlpha(1); // Torna o ícone visível
+              console.log("Badge coletada");
             }
           } catch (error) {
-            console.error('Erro ao coletar badge:', error);
+            console.error("Erro ao coletar badge:", error);
           }
         },
         null,
@@ -223,7 +231,9 @@ class Luladrao extends Bot {
 
       // Cria a segunda chave apenas se ela ainda não existir
       if (!this.keyItem02 && !this.scene.hasKey02) {
-        this.keyItem02 = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "key").setScale(0.05);
+        this.keyItem02 = this.scene.physics.add
+          .sprite(this.sprite.x, this.sprite.y, "key")
+          .setScale(0.05);
         this.scene.keyItems.add(this.keyItem02);
 
         // Configura o overlap entre jogador e chave para coletar
@@ -232,17 +242,21 @@ class Luladrao extends Bot {
           this.keyItem02,
           () => {
             try {
-              if (!this.scene.hasKey02 && this.keyItem02 && this.keyItem02.active) {
+              if (
+                !this.scene.hasKey02 &&
+                this.keyItem02 &&
+                this.keyItem02.active
+              ) {
                 this.scene.hasKey02 = true;
                 this.keyItem02.destroy();
                 this.scene.keyItems.delete(this.keyItem02);
                 this.keyItem02 = null;
                 this.scene.updateKeyIndicators(); // Atualiza todos os indicadores
-                this.scene.keyIcons.key2.setAlpha(1);  // Torna o ícone da chave 2 visível
-                console.log('Segunda chave coletada');
+                this.scene.keyIcons.key2.setAlpha(1); // Torna o ícone da chave 2 visível
+                console.log("Segunda chave coletada");
               }
             } catch (error) {
-              console.error('Erro ao coletar segunda chave:', error);
+              console.error("Erro ao coletar segunda chave:", error);
             }
           },
           null,
@@ -250,7 +264,7 @@ class Luladrao extends Bot {
         );
       }
     } catch (error) {
-      console.error('Erro no método die do Luladrao:', error);
+      console.error("Erro no método die do Luladrao:", error);
     }
   }
 
@@ -260,7 +274,6 @@ class Luladrao extends Bot {
       this.scene.picanha.play();
     }
   }
-
 
   updateAnimation() {
     if (!this.alive) return;
@@ -296,13 +309,13 @@ class Moreno extends Bot {
     super(scene, x, y);
     this.sprite.setTexture("moreno_frente1");
     this.sprite.setScale(0.2);
-    this.sprite.body.setSize(100, 200);  // Largura: 40, Altura: 80 (ajuste conforme necessário)
-    this.sprite.body.setOffset(10, 10)
+    this.sprite.body.setSize(100, 200); // Largura: 40, Altura: 80 (ajuste conforme necessário)
+    this.sprite.body.setOffset(10, 10);
   }
 
   // Sobrescrevendo o método die() para o bot Moreno
   die() {
-    this.alive = false;  // Marca o Moreno como morto
+    this.alive = false; // Marca o Moreno como morto
     this.sprite.setVelocity(0, 0);
     this.sprite.setTint(0xff6666);
     this.sprite.setAlpha(0.5);
@@ -311,19 +324,24 @@ class Moreno extends Bot {
     this.healthBar.setAlpha(0);
 
     // Posiciona o item (badge) no local do Moreno morto
-    const BikeBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "bike_badge").setScale(0.05);
+    const BikeBadge = this.scene.physics.add
+      .sprite(this.sprite.x, this.sprite.y, "bike_badge")
+      .setScale(0.05);
 
     // Configura o overlap entre jogador e badge para coletar
     this.scene.physics.add.overlap(
-      this.scene.player,  // Assumindo que o jogador seja chamado "player"
+      this.scene.player, // Assumindo que o jogador seja chamado "player"
       BikeBadge,
       () => {
-        this.scene.hasBikeBadge = true;  // Marca que o jogador tem a badge
-        BikeBadge.destroy();  // Remove a badge do mapa
-        this.scene.badgeIcons.bike.setAlpha(1);  // Torna o ícone visível
+        this.scene.hasBikeBadge = true; // Marca que o jogador tem a badge
+        BikeBadge.destroy(); // Remove a badge do mapa
+        this.scene.badgeIcons.bike.setAlpha(1); // Torna o ícone visível
 
         // !=================== !AJUSTAR POSIÇÃO DA BADGE (apenas a primeira variável "958 atualmente")! ===================!
-        this.scene.showKeyIndicator = this.scene.add.image(1250, 350, "bike_badge").setScale(0.05).setScrollFactor(0);  // Mostra a badge no HUD
+        this.scene.showKeyIndicator = this.scene.add
+          .image(1250, 350, "bike_badge")
+          .setScale(0.05)
+          .setScrollFactor(0); // Mostra a badge no HUD
       },
       null,
       this.scene
@@ -336,7 +354,6 @@ class Moreno extends Bot {
       this.scene.aow.play();
     }
   }
-
 
   updateAnimation() {
     if (!this.alive) return;
@@ -372,8 +389,8 @@ class Hugo extends Bot {
     super(scene, x, y);
     this.sprite.setTexture("hugo_frente1");
     this.sprite.setScale(0.19);
-    this.sprite.body.setSize(100, 290);  // Largura: 40, Altura: 80 (ajuste conforme necessário)
-    this.sprite.body.setOffset(60, 60)
+    this.sprite.body.setSize(100, 290); // Largura: 40, Altura: 80 (ajuste conforme necessário)
+    this.sprite.body.setOffset(60, 60);
   }
   playAnimIfNotPlaying(key) {
     if (this.sprite.anims.currentAnim?.key !== key) {
@@ -383,7 +400,7 @@ class Hugo extends Bot {
 
   // Sobrescrevendo o método die() para o bot Hugo
   die() {
-    this.alive = false;  // Marca o Hugo como morto
+    this.alive = false; // Marca o Hugo como morto
     this.sprite.setVelocity(0, 0);
     this.sprite.setTint(0xff6666);
     this.sprite.setAlpha(0.5);
@@ -392,19 +409,24 @@ class Hugo extends Bot {
     this.healthBar.setAlpha(0);
 
     // Posiciona o item (ZeroBadge) no local do Hugo morto
-    const ZeroBadge = this.scene.physics.add.sprite(this.sprite.x, this.sprite.y, "zero_badge").setScale(0.5);
+    const ZeroBadge = this.scene.physics.add
+      .sprite(this.sprite.x, this.sprite.y, "zero_badge")
+      .setScale(0.5);
 
     // Configura o overlap entre jogador e badge para coletar
     this.scene.physics.add.overlap(
-      this.scene.player,  // Assumindo que o jogador seja chamado "player"
+      this.scene.player, // Assumindo que o jogador seja chamado "player"
       ZeroBadge,
       () => {
-        this.scene.hasZeroBadge = true;  // Marca que o jogador tem a badge
-        ZeroBadge.destroy();  // Remove a badge do mapa
-        this.scene.badgeIcons.zero.setAlpha(1);  // Torna o ícone visível
+        this.scene.hasZeroBadge = true; // Marca que o jogador tem a badge
+        ZeroBadge.destroy(); // Remove a badge do mapa
+        this.scene.badgeIcons.zero.setAlpha(1); // Torna o ícone visível
 
         // !=================== !AJUSTAR POSIÇÃO DA BADGE (apenas a primeira variável "958 atualmente")! ===================!
-        this.scene.showKeyIndicator = this.scene.add.image(1300, 350, "zero_badge").setScale(0.6).setScrollFactor(0);  // Mostra a badge no HUD
+        this.scene.showKeyIndicator = this.scene.add
+          .image(1300, 350, "zero_badge")
+          .setScale(0.6)
+          .setScrollFactor(0); // Mostra a badge no HUD
       }, //AJUSTADO!!!
       null,
       this.scene
@@ -417,7 +439,6 @@ class Hugo extends Bot {
   //     this.scene.picanha.play();
   //   }
   // }
-
 
   updateAnimation() {
     if (!this.alive) return;
@@ -669,7 +690,7 @@ class MainScene extends Phaser.Scene {
       const point = new Phaser.Geom.Point(x, y);
 
       // Verifica se o ponto está dentro de alguma barreira
-      const collides = this.walls.some(barrier => {
+      const collides = this.walls.some((barrier) => {
         const rect = new Phaser.Geom.Rectangle(
           barrier.x - barrier.width / 2,
           barrier.y - barrier.height / 2,
@@ -680,7 +701,12 @@ class MainScene extends Phaser.Scene {
       });
 
       // Verifica se está longe do spawn do jogador
-      const distFromPlayer = Phaser.Math.Distance.Between(x, y, playerSpawnX, playerSpawnY);
+      const distFromPlayer = Phaser.Math.Distance.Between(
+        x,
+        y,
+        playerSpawnX,
+        playerSpawnY
+      );
 
       if (!collides && distFromPlayer >= minDistanceFromPlayer) {
         return { x, y };
@@ -732,10 +758,10 @@ class MainScene extends Phaser.Scene {
     this.hasKey = false;
     this.hasKey02 = false;
     this.hasKey03 = false;
-    this.keyIcon = null;        // Primeira chave no HUD
-    this.keyIcon02 = null;      // Segunda chave no HUD
-    this.keyIcon03 = null;      // Terceira chave no HUD
-    this.keyItem03 = null;      // Terceira chave (do buraco)
+    this.keyIcon = null; // Primeira chave no HUD
+    this.keyIcon02 = null; // Segunda chave no HUD
+    this.keyIcon03 = null; // Terceira chave no HUD
+    this.keyItem03 = null; // Terceira chave (do buraco)
     this.hasBikeBadge = false;
     this.hasZeroBadge = false;
     this.hasPicanhaBadge = false;
@@ -768,6 +794,8 @@ class MainScene extends Phaser.Scene {
 
     this.attackCooldown = false; // Novo: cooldown para ataque
     this.attackCooldownTime = 700; // Novo: tempo do cooldown em ms (1 segundo)
+
+    this.gameOver = false; // Nova flag para controlar o estado do jogo
   }
 
   preload() {
@@ -795,18 +823,15 @@ class MainScene extends Phaser.Scene {
 
     this.load.image("key", "assets/key.png");
 
-    this.load.image("vida", "assets/vida.png");
-
     this.load.image("map", "assets/map.png");
 
-    this.load.image('heart', 'assets/heart_sprite.png');
+    this.load.image("heart", "assets/heart_sprite.png");
 
-    this.load.audio('somSoco', 'assets/somSoco.mp3');
+    this.load.audio("somSoco", "assets/somSoco.mp3");
 
-    this.load.audio('picanha', 'assets/picanha.mp3');
+    this.load.audio("picanha", "assets/picanha.mp3");
 
-    this.load.audio('aow', 'assets/aow.mp3');
-
+    this.load.audio("aow", "assets/aow.mp3");
 
     this.load.image("luladrao_frente1", "assets/luladrao_frente1.png");
     this.load.image("luladrao_frente2", "assets/luladrao_frente2.png");
@@ -857,19 +882,19 @@ class MainScene extends Phaser.Scene {
   }
 
   create() {
-
     // Acessa a música que foi carregada no MenuScene
-    this.musicaJogo = this.sound.get('musicaJogo'); // A música já foi carregada no MenuScene
+    this.musicaJogo = this.sound.get("musicaJogo"); // A música já foi carregada no MenuScene
 
     // Cria o sprite de tela vermelha (transparente inicialmente)
-    this.redScreen = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0xff0000)
-      .setOrigin(0, 0)  // Coloca a origem no canto superior esquerdo
-      .setAlpha(0)      // Começa invisível
-      .setDepth(10);    // Coloca acima de tudo na cena
+    this.redScreen = this.add
+      .rectangle(0, 0, this.scale.width, this.scale.height, 0xff0000)
+      .setOrigin(0, 0) // Coloca a origem no canto superior esquerdo
+      .setAlpha(0) // Começa invisível
+      .setDepth(10); // Coloca acima de tudo na cena
 
-    this.somSoco = this.sound.add('somSoco');
-    this.picanha = this.sound.add('picanha');
-    this.aow = this.sound.add('aow');
+    this.somSoco = this.sound.add("somSoco");
+    this.picanha = this.sound.add("picanha");
+    this.aow = this.sound.add("aow");
     // Adiciona o map.png cobrindo toda a tela
     this.add
       .image(0, 0, "map")
@@ -919,41 +944,28 @@ class MainScene extends Phaser.Scene {
 
     this.anims.create({
       key: "luladrao_walk_down",
-      frames: [
-        { key: "luladrao_frente1" },
-        { key: "luladrao_frente2" },
-      ],
+      frames: [{ key: "luladrao_frente1" }, { key: "luladrao_frente2" }],
       frameRate: 8,
       repeat: -1,
     });
     this.anims.create({
       key: "luladrao_walk_up",
-      frames: [
-        { key: "luladrao_costas1" },
-        { key: "luladrao_costas2" },
-      ],
+      frames: [{ key: "luladrao_costas1" }, { key: "luladrao_costas2" }],
       frameRate: 8,
       repeat: -1,
     });
     this.anims.create({
       key: "luladrao_walk_left",
-      frames: [
-        { key: "luladrao_esquerda1" },
-        { key: "luladrao_esquerda2" },
-      ],
+      frames: [{ key: "luladrao_esquerda1" }, { key: "luladrao_esquerda2" }],
       frameRate: 8,
       repeat: -1,
     });
     this.anims.create({
       key: "luladrao_walk_right",
-      frames: [
-        { key: "luladrao_direita1" },
-        { key: "luladrao_direita2" },
-      ],
+      frames: [{ key: "luladrao_direita1" }, { key: "luladrao_direita2" }],
       frameRate: 8,
       repeat: -1,
     });
-
 
     this.anims.create({
       key: "guarda_walk_down",
@@ -981,83 +993,59 @@ class MainScene extends Phaser.Scene {
     });
 
     this.anims.create({
-      key: 'hugo_walk_down',
-      frames: [
-        { key: 'hugo_frente1' },
-        { key: 'hugo_frente2' },
-      ],
+      key: "hugo_walk_down",
+      frames: [{ key: "hugo_frente1" }, { key: "hugo_frente2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
 
     this.anims.create({
-      key: 'hugo_walk_up',
-      frames: [
-        { key: 'hugo_costas1' },
-        { key: 'hugo_costas2' },
-      ],
+      key: "hugo_walk_up",
+      frames: [{ key: "hugo_costas1" }, { key: "hugo_costas2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
 
     this.anims.create({
-      key: 'hugo_walk_left',
-      frames: [
-        { key: 'hugo_esquerda1' },
-        { key: 'hugo_esquerda2' },
-      ],
+      key: "hugo_walk_left",
+      frames: [{ key: "hugo_esquerda1" }, { key: "hugo_esquerda2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
 
     this.anims.create({
-      key: 'hugo_walk_right',
-      frames: [
-        { key: 'hugo_direita1' },
-        { key: 'hugo_direita2' },
-      ],
+      key: "hugo_walk_right",
+      frames: [{ key: "hugo_direita1" }, { key: "hugo_direita2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
 
     this.anims.create({
-      key: 'moreno_walk_down',
-      frames: [
-        { key: 'moreno_frente1' },
-        { key: 'moreno_frente2' },
-      ],
+      key: "moreno_walk_down",
+      frames: [{ key: "moreno_frente1" }, { key: "moreno_frente2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
 
     this.anims.create({
-      key: 'moreno_walk_up',
-      frames: [
-        { key: 'moreno_costas1' },
-        { key: 'moreno_costas2' },
-      ],
+      key: "moreno_walk_up",
+      frames: [{ key: "moreno_costas1" }, { key: "moreno_costas2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
 
     this.anims.create({
-      key: 'moreno_walk_left',
-      frames: [
-        { key: 'moreno_esquerda1' },
-        { key: 'moreno_esquerda2' },
-      ],
+      key: "moreno_walk_left",
+      frames: [{ key: "moreno_esquerda1" }, { key: "moreno_esquerda2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
 
     this.anims.create({
-      key: 'moreno_walk_right',
-      frames: [
-        { key: 'moreno_direita1' },
-        { key: 'moreno_direita2' },
-      ],
+      key: "moreno_walk_right",
+      frames: [{ key: "moreno_direita1" }, { key: "moreno_direita2" }],
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     });
 
     this.player = this.add.sprite(400, 300, "player_frente1");
@@ -1090,7 +1078,7 @@ class MainScene extends Phaser.Scene {
 
     // 3) Cálculo das dimensões do sprite do coração já escalado:
     //    - o sprite (origem: 64×64) em setScale(0.5) vira 32×32 na tela.
-    const heartWidth = 32;  // 64px * 0.5
+    const heartWidth = 32; // 64px * 0.5
     const heartHeight = 32; // 64px * 0.5
 
     // 4) Queremos que eles fiquem "5px acima" do topo da chave
@@ -1104,7 +1092,7 @@ class MainScene extends Phaser.Scene {
       const y = heartsBaseY;
 
       const heartIcon = this.add
-        .image(x, y, 'heart')
+        .image(x, y, "heart")
         .setOrigin(-17, -10)
         .setScale(0.5)
         .setScrollFactor(0); // fixa na câmera
@@ -1115,35 +1103,63 @@ class MainScene extends Phaser.Scene {
     this.updateHearts();
 
     // === TIMER ao lado dos corações ===
-    this.timerText = this.add.text(
-      keyX + this.maxLives * (heartWidth + spacingBetweenHearts) + 550,
-      heartsBaseY + 323,
-      "05:00",
-      {
-        font: "16px Arial",
-        fill: "#ffffff",
-        padding: { x: 10, y: 3 }
-      }
-    ).setScrollFactor(0);
+    this.timerText = this.add
+      .text(
+        keyX + this.maxLives * (heartWidth + spacingBetweenHearts) + 550,
+        heartsBaseY + 323,
+        "05:00",
+        {
+          font: "16px Arial",
+          fill: "#ffffff",
+          padding: { x: 10, y: 3 },
+        }
+      )
+      .setScrollFactor(0);
 
     // Adiciona os três badges no HUD com transparência
-    this.badgeIcons.picanha = this.add.image(1200, 350, "picanha_badge").setScale(0.1).setScrollFactor(0).setAlpha(0.3);
-    this.badgeIcons.bike = this.add.image(1250, 350, "bike_badge").setScale(0.05).setScrollFactor(0).setAlpha(0.3);
-    this.badgeIcons.zero = this.add.image(1300, 350, "zero_badge").setScale(0.6).setScrollFactor(0).setAlpha(0.3);
+    this.badgeIcons.picanha = this.add
+      .image(1200, 350, "picanha_badge")
+      .setScale(0.1)
+      .setScrollFactor(0)
+      .setAlpha(0.3);
+    this.badgeIcons.bike = this.add
+      .image(1250, 350, "bike_badge")
+      .setScale(0.05)
+      .setScrollFactor(0)
+      .setAlpha(0.3);
+    this.badgeIcons.zero = this.add
+      .image(1300, 350, "zero_badge")
+      .setScale(0.6)
+      .setScrollFactor(0)
+      .setAlpha(0.3);
 
     // Adiciona os ícones das chaves no HUD com transparência
-    this.keyIcons.key1 = this.add.image(618, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0).setAlpha(0.3);
-    this.keyIcons.key2 = this.add.image(658, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0).setAlpha(0.3);
-    this.keyIcons.key3 = this.add.image(698, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0).setAlpha(0.3);
-
+    this.keyIcons.key1 = this.add
+      .image(618, 390, "key")
+      .setOrigin(0.5)
+      .setScale(0.07)
+      .setScrollFactor(0)
+      .setAlpha(0.3);
+    this.keyIcons.key2 = this.add
+      .image(658, 390, "key")
+      .setOrigin(0.5)
+      .setScale(0.07)
+      .setScrollFactor(0)
+      .setAlpha(0.3);
+    this.keyIcons.key3 = this.add
+      .image(698, 390, "key")
+      .setOrigin(0.5)
+      .setScale(0.07)
+      .setScrollFactor(0)
+      .setAlpha(0.3);
 
     // Definindo o zoom (2x)
     this.cameras.main.setZoom(2.5); //ALTERAR PARA 2.0 OU 2.5 DEPOIS (ALTEREI PARA FAZER AS BARREIRAS)
 
     // (2) Sempre que a câmera mudar de zoom, reduzimos a escala do HUD em 1/zoom:
-    this.cameras.main.on('zoom', (camera, zoom) => {
+    this.cameras.main.on("zoom", (camera, zoom) => {
       // cada coração tinha scale-base = 0.5
-      this.hearts.forEach(h => {
+      this.hearts.forEach((h) => {
         h.setScale(0.5 / zoom);
       });
       // o ícone da chave tinha scale-base = 0.07
@@ -1164,7 +1180,8 @@ class MainScene extends Phaser.Scene {
     this.zKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
     this.bots = [];
-    for (let i = 0; i < 3; i++) { //ALTERAR QUANTIDADE DE BOTS (TIREI PRA FAZER AS BARREIRAS)
+    for (let i = 0; i < 3; i++) {
+      //ALTERAR QUANTIDADE DE BOTS (TIREI PRA FAZER AS BARREIRAS)
       const x = Phaser.Math.Between(50, 750);
       const y = Phaser.Math.Between(50, 550);
       const bot = new Bot(this, x, y);
@@ -1172,21 +1189,27 @@ class MainScene extends Phaser.Scene {
     }
 
     this.guards = [];
-    for (let i = 0; i < 15; i++) { // Número de guardas
+    for (let i = 0; i < 15; i++) {
+      // Número de guardas
       let guardX, guardY;
       let validPosition = false;
 
       // Gera a posição do guarda de forma que fique distante do jogador
       while (!validPosition) {
-        guardX = Phaser.Math.Between(300, 1920);  // Posição X aleatória (fora do alcance próximo do jogador)
-        guardY = Phaser.Math.Between(100, 1080);  // Posição Y aleatória
+        guardX = Phaser.Math.Between(300, 1920); // Posição X aleatória (fora do alcance próximo do jogador)
+        guardY = Phaser.Math.Between(100, 1080); // Posição Y aleatória
 
         // Verifica a distância entre o guarda e o jogador
-        const dist = Phaser.Math.Distance.Between(guardX, guardY, this.player.x, this.player.y);
+        const dist = Phaser.Math.Distance.Between(
+          guardX,
+          guardY,
+          this.player.x,
+          this.player.y
+        );
 
         // Se a distância for maior que 300 pixels, o guarda pode ser colocado lá
         if (dist > 300) {
-          validPosition = true;  // Encontrei uma posição válida
+          validPosition = true; // Encontrei uma posição válida
         }
       }
 
@@ -1261,14 +1284,16 @@ class MainScene extends Phaser.Scene {
           this.remainingTime--;
           const minutes = Math.floor(this.remainingTime / 60);
           const seconds = this.remainingTime % 60;
-          const formatted = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+          const formatted = `${minutes.toString().padStart(2, "0")}:${seconds
+            .toString()
+            .padStart(2, "0")}`;
           this.timerText.setText(formatted);
         } else {
           this.timerText.setText("00:00");
           window.location.reload(); // Reinicia a página
         }
       },
-      callbackScope: this
+      callbackScope: this,
     });
 
     //BARREIRAS ==========================================================
@@ -1286,7 +1311,7 @@ class MainScene extends Phaser.Scene {
 
     //BORDA SUPERIOR
     const barrier2 = this.add.rectangle(1024, 20, 2048, 55);
-    this.physics.add.existing(barrier2, true);   // corpo estático
+    this.physics.add.existing(barrier2, true); // corpo estático
     barrier2.setVisible(false);
     this.walls.push(barrier2);
 
@@ -1536,11 +1561,11 @@ class MainScene extends Phaser.Scene {
             this.keyItems.delete(this.keyItem);
             this.keyItem = null;
             this.updateKeyIndicators(); // Atualiza todos os indicadores
-            this.scene.keyIcons.key1.setAlpha(1);  // Torna o ícone da chave 1 visível
-            console.log('Primeira chave coletada');
+            this.keyIcons.key1.setAlpha(1); // Torna o ícone da chave 1 visível
+            console.log("Primeira chave coletada");
           }
         } catch (error) {
-          console.error('Erro ao coletar primeira chave:', error);
+          console.error("Erro ao coletar primeira chave:", error);
         }
       },
       null,
@@ -1548,12 +1573,14 @@ class MainScene extends Phaser.Scene {
     );
 
     // Add hole sprite (initially disabled)
-    this.holeSprite = this.physics.add.sprite(1820, 160, 'buraco1').setScale(0.3);
+    this.holeSprite = this.physics.add
+      .sprite(1820, 160, "buraco1")
+      .setScale(0.3);
     this.holeSprite.setImmovable(true);
     this.holeSprite.setVisible(false);
     this.holeSprite.setDepth(0); // Buraco fica na camada base
-    this.player.setDepth(2);     // Personagem fica acima do buraco
-    this.bots.forEach(bot => {
+    this.player.setDepth(2); // Personagem fica acima do buraco
+    this.bots.forEach((bot) => {
       if (bot.sprite) bot.sprite.setDepth(2); // Todos os bots ficam acima do buraco
     });
 
@@ -1561,12 +1588,15 @@ class MainScene extends Phaser.Scene {
     this.cKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
 
     // Add interaction text (initially hidden)
-    this.holeInteractionText = this.add.text(0, 0, 'Pressione C para interagir', {
-      font: '16px Arial',
-      fill: '#ffffff',
-      backgroundColor: '#000000',
-      padding: { x: 5, y: 3 }
-    }).setOrigin(0.5).setVisible(false);
+    this.holeInteractionText = this.add
+      .text(0, 0, "Pressione C para interagir", {
+        font: "16px Arial",
+        fill: "#ffffff",
+        backgroundColor: "#000000",
+        padding: { x: 5, y: 3 },
+      })
+      .setOrigin(0.5)
+      .setVisible(false);
 
     // Add overlap detection for hole interaction
     this.physics.add.overlap(
@@ -1580,14 +1610,38 @@ class MainScene extends Phaser.Scene {
 
   updateKeyIndicators() {
     // Remove ícones antigos
-    if (this.keyIcon) { this.keyIcon.destroy(); this.keyIcon = null; }
-    if (this.keyIcon02) { this.keyIcon02.destroy(); this.keyIcon02 = null; }
-    if (this.keyIcon03) { this.keyIcon03.destroy(); this.keyIcon03 = null; }
+    if (this.keyIcon) {
+      this.keyIcon.destroy();
+      this.keyIcon = null;
+    }
+    if (this.keyIcon02) {
+      this.keyIcon02.destroy();
+      this.keyIcon02 = null;
+    }
+    if (this.keyIcon03) {
+      this.keyIcon03.destroy();
+      this.keyIcon03 = null;
+    }
 
     // Adiciona ícones conforme as chaves coletadas
-    if (this.hasKey) this.keyIcon = this.add.image(618, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0);
-    if (this.hasKey02) this.keyIcon02 = this.add.image(658, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0);
-    if (this.hasKey03) this.keyIcon03 = this.add.image(698, 390, "key").setOrigin(0.5).setScale(0.07).setScrollFactor(0);
+    if (this.hasKey)
+      this.keyIcon = this.add
+        .image(618, 390, "key")
+        .setOrigin(0.5)
+        .setScale(0.07)
+        .setScrollFactor(0);
+    if (this.hasKey02)
+      this.keyIcon02 = this.add
+        .image(658, 390, "key")
+        .setOrigin(0.5)
+        .setScale(0.07)
+        .setScrollFactor(0);
+    if (this.hasKey03)
+      this.keyIcon03 = this.add
+        .image(698, 390, "key")
+        .setOrigin(0.5)
+        .setScale(0.07)
+        .setScrollFactor(0);
 
     // Verifica se tem todas as chaves para habilitar a fuga
     if (this.hasKey && this.hasKey02 && this.hasKey03 && !this.escapeEnabled) {
@@ -1599,18 +1653,23 @@ class MainScene extends Phaser.Scene {
     this.escapeEnabled = true;
 
     // Cria o sprite da saída
-    this.escapeSprite = this.physics.add.sprite(this.escapePosition.x, this.escapePosition.y, 'buraco5').setScale(0.3);
+    this.escapeSprite = this.physics.add
+      .sprite(this.escapePosition.x, this.escapePosition.y, "buraco5")
+      .setScale(0.3);
     this.escapeSprite.setImmovable(true);
     this.escapeSprite.setVisible(true);
     this.escapeSprite.setDepth(0);
 
     // Cria o texto de interação
-    this.escapeInteractionText = this.add.text(0, 0, 'Pressione C para fugir', {
-      font: '16px Arial',
-      fill: '#ffffff',
-      backgroundColor: '#000000',
-      padding: { x: 5, y: 3 }
-    }).setOrigin(0.5).setVisible(false);
+    this.escapeInteractionText = this.add
+      .text(0, 0, "Pressione C para fugir", {
+        font: "16px Arial",
+        fill: "#ffffff",
+        backgroundColor: "#000000",
+        padding: { x: 5, y: 3 },
+      })
+      .setOrigin(0.5)
+      .setVisible(false);
 
     // Adiciona overlap para detectar quando o jogador está perto da saída
     this.physics.add.overlap(
@@ -1650,43 +1709,48 @@ class MainScene extends Phaser.Scene {
 
   handlePlayerGuardCollision(playerSprite, botSprite) {
     const bot = this.bots.find((b) => b.sprite === botSprite);
-    
-    if (bot instanceof Bot || bot instanceof Luladrao || bot instanceof Hugo || bot instanceof Moreno) {
-        if (!this.playerInvincible) {
-            if (bot instanceof Bot && bot.hitsDealt >= bot.maxHits) {
-                // Bot já bateu 3x, para de perseguir e volta a andar aleatoriamente
-                bot.angry = false;
-                bot.chaseTarget = null;
-                bot.setRandomVelocity();
-                return; // Não causa mais dano
-            }
 
-            // Se o bot for um Guarda ou outro bot, começa a perseguição
-            if (bot instanceof Guarda || bot instanceof Bot) {
-                bot.startChasing(this.player); // Inicia a perseguição do bot
-            }
-
-            this.playerInvincible = true;
-
-            this.lives -= 1; // Linha add: Subtrai a vida
-            this.updateHearts(); // Linha add2: Atualiza os corações na tela
-
-            if (bot instanceof Bot) {
-                bot.hitsDealt++;
-            }
-
-            this.startChasingAllGuards(this.player);
-
-            if (this.lives <= 0) {
-                window.location.reload();
-            }
-
-            this.time.delayedCall(1500, () => {
-                this.playerInvincible = false;
-            });
+    if (
+      bot instanceof Bot ||
+      bot instanceof Luladrao ||
+      bot instanceof Hugo ||
+      bot instanceof Moreno
+    ) {
+      if (!this.playerInvincible) {
+        if (bot instanceof Bot && bot.hitsDealt >= bot.maxHits) {
+          // Bot já bateu 3x, para de perseguir e volta a andar aleatoriamente
+          bot.angry = false;
+          bot.chaseTarget = null;
+          bot.setRandomVelocity();
+          return; // Não causa mais dano
         }
+
+        // Se o bot for um Guarda ou outro bot, começa a perseguição
+        if (bot instanceof Guarda || bot instanceof Bot) {
+          bot.startChasing(this.player); // Inicia a perseguição do bot
+        }
+
+        this.playerInvincible = true;
+
+        this.lives -= 1; // Linha add: Subtrai a vida
+        this.updateHearts(); // Linha add2: Atualiza os corações na tela
+
+        if (bot instanceof Bot) {
+          bot.hitsDealt++;
+        }
+
+        this.startChasingAllGuards(this.player);
+
+        if (this.lives <= 0) {
+          window.location.reload();
+        }
+
+        this.time.delayedCall(1500, () => {
+          this.playerInvincible = false;
+        });
+      }
     }
-}
+  }
 
   // Método para atualizar quais corações aparecem
   updateHearts() {
@@ -1717,28 +1781,32 @@ class MainScene extends Phaser.Scene {
   }
 
   update() {
+    // Verifica se o jogo já terminou
+    if (!this.player || !this.player.active) {
+      return;
+    }
+
     // Acelera a música quando o jogador estiver com 1 coração ou quando o tempo for menor que 1 minuto
     if (this.lives === 1 || this.remainingTime <= 60) {
       if (this.musicaJogo && this.musicaJogo.rate !== 1.5) {
-        this.musicaJogo.setRate(1.5);  // Acelera a música para 1.5x
+        this.musicaJogo.setRate(1.5); // Acelera a música para 1.5x
       }
     } else {
       if (this.musicaJogo && this.musicaJogo.rate !== 1) {
-        this.musicaJogo.setRate(1);  // Reseta a música para a velocidade normal
+        this.musicaJogo.setRate(1); // Reseta a música para a velocidade normal
       }
     }
 
-
     // Se o jogador estiver com 1 coração, faça a tela piscar
-    if (this.lives === 1) {
+    if (this.lives === 1 && this.redScreen && this.redScreen.active) {
       if (this.redScreen.alpha === 0) {
         // Aumenta a opacidade para 1 (vermelho suave)
         this.tweens.add({
           targets: this.redScreen,
-          alpha: 0.5,  // Cor vermelha com 50% de opacidade
-          duration: 500,  // A duração do efeito de transição (em milissegundos)
-          yoyo: true,    // Faz com que a animação volte para o estado inicial
-          repeat: -1,    // Repete infinitamente
+          alpha: 0.5, // Cor vermelha com 50% de opacidade
+          duration: 500, // A duração do efeito de transição (em milissegundos)
+          yoyo: true, // Faz com que a animação volte para o estado inicial
+          repeat: -1, // Repete infinitamente
         });
       }
     }
@@ -1771,7 +1839,6 @@ class MainScene extends Phaser.Scene {
       this.player.anims.stop();
     }
     // ── FIM MOVIMENTAÇÃO ──
-
 
     if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
       this.bots.forEach((bot) => {
@@ -1814,7 +1881,11 @@ class MainScene extends Phaser.Scene {
     }
 
     // Handle hole interaction (only if enabled)
-    if (this.holeInteractionEnabled && this.isNearHole && Phaser.Input.Keyboard.JustDown(this.cKey)) {
+    if (
+      this.holeInteractionEnabled &&
+      this.isNearHole &&
+      Phaser.Input.Keyboard.JustDown(this.cKey)
+    ) {
       if (this.holeAnimationState === 0) {
         // Apenas inicia a animação, sem mostrar a frase novamente
         this.holeAnimationState = 1;
@@ -1826,25 +1897,23 @@ class MainScene extends Phaser.Scene {
         // When reaching the last animation frame, spawn the third key
         if (this.holeAnimationState === 5 && !this.keyItem03) {
           // Spawn the third key near the hole
-          this.keyItem03 = this.physics.add.sprite(
-            this.holeSprite.x + 50,
-            this.holeSprite.y,
-            "key"
-          ).setScale(0.05);
+          this.keyItem03 = this.physics.add
+            .sprite(this.holeSprite.x + 50, this.holeSprite.y, "key")
+            .setScale(0.05);
 
           // Add overlap detection for third key collection
           this.physics.add.overlap(
             this.player,
             this.keyItem03,
             () => {
-              if (!this.hasKey03) {  // Só coleta se ainda não tiver a chave
+              if (!this.hasKey03) {
+                // Só coleta se ainda não tiver a chave
                 this.hasKey03 = true;
                 this.keyItem03.destroy();
-                //this.scene.keyIcons.key3.setAlpha(1);  // Torna o ícone da chave 3 visível 
+                //this.scene.keyIcons.key3.setAlpha(1);  // Torna o ícone da chave 3 visível
                 this.updateKeyIndicators();
 
                 // Esconde o buraco e desativa a interação
-                this.holeSprite.setVisible(false);
                 this.holeInteractionEnabled = false;
                 this.holeInteractionText.setVisible(false);
                 this.isNearHole = false;
@@ -1859,11 +1928,20 @@ class MainScene extends Phaser.Scene {
 
     // Update hole interaction text position if visible
     if (this.holeInteractionText.visible) {
-      this.holeInteractionText.setPosition(this.holeSprite.x, this.holeSprite.y - 40);
+      this.holeInteractionText.setPosition(
+        this.holeSprite.x,
+        this.holeSprite.y - 40
+      );
     }
 
     // Handle escape interaction
-    if (this.escapeEnabled && this.isNearEscape && Phaser.Input.Keyboard.JustDown(this.cKey)) {
+    if (
+      this.escapeEnabled &&
+      this.isNearEscape &&
+      Phaser.Input.Keyboard.JustDown(this.cKey)
+    ) {
+      this.gameOver = true; // Marca o jogo como terminado
+
       // Remove completamente a tela vermelha
       if (this.redScreen) {
         this.redScreen.destroy();
@@ -1874,29 +1952,35 @@ class MainScene extends Phaser.Scene {
       this.player.setVisible(false);
 
       // Esconde todos os bots e guardas
-      this.bots.forEach(bot => {
+      this.bots.forEach((bot) => {
         if (bot.sprite) bot.sprite.setVisible(false);
       });
 
       // Mostra a imagem de vitória
-      const victoryImage = this.add.image(
-        this.cameras.main.centerX,
-        this.cameras.main.centerY,
-        'portaFuga'
-      ).setScale(0.5).setScrollFactor(0);
+      const victoryImage = this.add
+        .image(
+          this.cameras.main.centerX,
+          this.cameras.main.centerY,
+          "portaFuga"
+        )
+        .setScale(0.5)
+        .setScrollFactor(0);
 
-      console.log('Iniciando contagem regressiva para reiniciar...');
+      console.log("Iniciando contagem regressiva para reiniciar...");
 
       // Reinicia o jogo após 5 segundos
       setTimeout(() => {
-        console.log('Reiniciando o jogo...');
+        console.log("Reiniciando o jogo...");
         document.location.href = document.location.href;
       }, 5000);
     }
 
     // Update escape interaction text position if visible
     if (this.escapeInteractionText && this.escapeInteractionText.visible) {
-      this.escapeInteractionText.setPosition(this.escapeSprite.x, this.escapeSprite.y - 40);
+      this.escapeInteractionText.setPosition(
+        this.escapeSprite.x,
+        this.escapeSprite.y - 40
+      );
     }
 
     this.bots.forEach((bot) => {
