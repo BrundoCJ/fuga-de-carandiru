@@ -11,6 +11,7 @@ class MenuScene extends Phaser.Scene {
     this.load.image('gameBackground', 'assets/gameBackground.png');
     this.load.image('newGame', 'assets/new_game.png');
     this.load.video('intro', 'assets/videoNewGame.mp4');
+    this.load.video('inicio', 'assets/videoinicio.mp4');
 
     this.load.audio('click', 'assets/clickMouse.mp3');
 
@@ -61,58 +62,130 @@ class MenuScene extends Phaser.Scene {
       start.setVisible(false);
       bg.setVisible(false);
 
-      // Mostra a nova tela com o botão NEW GAME
-      const gameBg = this.add.image(0, 0, 'gameBackground').setOrigin(0).setDisplaySize(width, height);
-      const newGameBtn = this.add.image(width / 2, 480, 'newGame').setScale(0.6).setInteractive({ cursor: 'pointer' });
+      // Adiciona e reproduz o vídeo de início
+      const videoInicio = this.add.video(width / 2, height / 2, 'inicio');
 
-      // Aplica a mesma animação flutuante no botão NEW GAME
-      this.tweens.add({
-        targets: newGameBtn,
-        y: '+=10',
-        duration: 1500,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.easeInOut'
-      });
+      // Adiciona o botão de pular
+      const skipButton = this.add.text(width - 140, 1000, 'Pular', {
+        fontSize: '32px',
+        fill: '#ffffff',
+        backgroundColor: '#000000',
+        padding: { x: 10, y: 5 }
+      })
+      .setInteractive({ cursor: 'pointer' })
+      .setDepth(1001);
 
-      // Quando o botão NEW GAME for clicado
-      newGameBtn.on('pointerdown', () => {
-        this.handleNewGameClick();
-      });
+      // Função para mostrar a tela de NEW GAME
+      const showNewGameScreen = () => {
+        videoInicio.destroy();
+        skipButton.destroy();
+        
+        // Mostra a nova tela com o botão NEW GAME
+        const gameBg = this.add.image(0, 0, 'gameBackground').setOrigin(0).setDisplaySize(width, height);
+        const newGameBtn = this.add.image(width / 2, 480, 'newGame').setScale(0.6).setInteractive({ cursor: 'pointer' });
 
-      // Função para lidar com o clique no NEW GAME
-      this.handleNewGameClick = () => {
-        this.sound.play('click');
-        gameBg.setVisible(false);
-        newGameBtn.setVisible(false);
-
-        // Adiciona e reproduz o vídeo
-        const video = this.add.video(width / 2, height / 2, 'intro');
-
-        video.once('play', () => {
-          video.setDisplaySize(width, height);
-          video.setDepth(1000);
+        // Aplica a mesma animação flutuante no botão NEW GAME
+        this.tweens.add({
+          targets: newGameBtn,
+          y: '+=10',
+          duration: 1500,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.easeInOut'
         });
 
-        video.play(false);
+        // Quando o botão NEW GAME for clicado
+        newGameBtn.on('pointerdown', () => {
+          this.sound.play('click');
+          gameBg.setVisible(false);
+          newGameBtn.setVisible(false);
 
-        video.once('complete', () => {
-          video.destroy();
-          this.scene.start('MainScene');
+          // Adiciona e reproduz o vídeo
+          const video = this.add.video(width / 2, height / 2, 'intro');
+
+          video.once('play', () => {
+            video.setDisplaySize(width, height);
+            video.setDepth(1000);
+          });
+
+          video.play(false);
+
+          video.once('complete', () => {
+            video.destroy();
+            this.scene.start('MainScene');
+          });
+        });
+
+        // Adiciona eventos de teclado para o NEW GAME
+        this.input.keyboard.on('keydown-SPACE', () => {
+          if (newGameBtn.visible) {
+            this.sound.play('click');
+            gameBg.setVisible(false);
+            newGameBtn.setVisible(false);
+
+            // Adiciona e reproduz o vídeo
+            const video = this.add.video(width / 2, height / 2, 'intro');
+
+            video.once('play', () => {
+              video.setDisplaySize(width, height);
+              video.setDepth(1000);
+            });
+
+            video.play(false);
+
+            video.once('complete', () => {
+              video.destroy();
+              this.scene.start('MainScene');
+            });
+          }
+        });
+
+        this.input.keyboard.on('keydown-ENTER', () => {
+          if (newGameBtn.visible) {
+            this.sound.play('click');
+            gameBg.setVisible(false);
+            newGameBtn.setVisible(false);
+
+            // Adiciona e reproduz o vídeo
+            const video = this.add.video(width / 2, height / 2, 'intro');
+
+            video.once('play', () => {
+              video.setDisplaySize(width, height);
+              video.setDepth(1000);
+            });
+
+            video.play(false);
+
+            video.once('complete', () => {
+              video.destroy();
+              this.scene.start('MainScene');
+            });
+          }
         });
       };
 
-      // Adiciona eventos de teclado para o NEW GAME
-      this.input.keyboard.on('keydown-SPACE', () => {
-        if (newGameBtn.visible) {
-          this.handleNewGameClick();
+      // Adiciona evento de clique no botão pular
+      skipButton.on('pointerdown', () => {
+        this.sound.play('click');
+        showNewGameScreen();
+      });
+
+      // Adiciona evento de teclado para pular com ESC
+      this.input.keyboard.on('keydown-ESC', () => {
+        if (videoInicio.isPlaying()) {
+          showNewGameScreen();
         }
       });
 
-      this.input.keyboard.on('keydown-ENTER', () => {
-        if (newGameBtn.visible) {
-          this.handleNewGameClick();
-        }
+      videoInicio.once('play', () => {
+        videoInicio.setDisplaySize(width, height);
+        videoInicio.setDepth(1000);
+      });
+
+      videoInicio.play(false);
+
+      videoInicio.once('complete', () => {
+        showNewGameScreen();
       });
     };
 
