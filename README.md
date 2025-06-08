@@ -48,4 +48,4 @@ cd fuga-de-carandiru
 Este projeto foi desenvolvido como trabalho acadêmico e está sob a licença MIT.
 
 ---
-Desenvolvido com ❤️ pela equipe Fuga de Carandiru 
+Desenvolvido pela equipe Fuga de Carandiru 
