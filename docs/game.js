@@ -1095,7 +1095,8 @@ class MainScene extends Phaser.Scene {
         .image(x, y, "heart")
         .setOrigin(-17, -10)
         .setScale(0.5)
-        .setScrollFactor(0); // fixa na câmera
+        .setScrollFactor(0) // fixa na câmera
+        .setDepth(1000); // Garante que fique acima de tudo
 
       this.hearts.push(heartIcon);
     }
@@ -1114,24 +1115,28 @@ class MainScene extends Phaser.Scene {
           padding: { x: 10, y: 3 },
         }
       )
-      .setScrollFactor(0);
+      .setScrollFactor(0)
+      .setDepth(1000);
 
     // Adiciona os três badges no HUD com transparência
     this.badgeIcons.picanha = this.add
       .image(1200, 350, "picanha_badge")
       .setScale(0.1)
       .setScrollFactor(0)
-      .setAlpha(0.3);
+      .setAlpha(0.3)
+      .setDepth(1000);
     this.badgeIcons.bike = this.add
       .image(1250, 350, "bike_badge")
       .setScale(0.05)
       .setScrollFactor(0)
-      .setAlpha(0.3);
+      .setAlpha(0.3)
+      .setDepth(1000);
     this.badgeIcons.zero = this.add
       .image(1300, 350, "zero_badge")
       .setScale(0.6)
       .setScrollFactor(0)
-      .setAlpha(0.3);
+      .setAlpha(0.3)
+      .setDepth(1000);
 
     // Adiciona os ícones das chaves no HUD com transparência
     this.keyIcons.key1 = this.add
@@ -1139,19 +1144,22 @@ class MainScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setScale(0.07)
       .setScrollFactor(0)
-      .setAlpha(0.3);
+      .setAlpha(0.3)
+      .setDepth(1000);
     this.keyIcons.key2 = this.add
       .image(658, 390, "key")
       .setOrigin(0.5)
       .setScale(0.07)
       .setScrollFactor(0)
-      .setAlpha(0.3);
+      .setAlpha(0.3)
+      .setDepth(1000);
     this.keyIcons.key3 = this.add
       .image(698, 390, "key")
       .setOrigin(0.5)
       .setScale(0.07)
       .setScrollFactor(0)
-      .setAlpha(0.3);
+      .setAlpha(0.3)
+      .setDepth(1000);
 
     // Definindo o zoom (2x)
     this.cameras.main.setZoom(2.5); //ALTERAR PARA 2.0 OU 2.5 DEPOIS (ALTEREI PARA FAZER AS BARREIRAS)
@@ -1596,7 +1604,8 @@ class MainScene extends Phaser.Scene {
         padding: { x: 5, y: 3 },
       })
       .setOrigin(0.5)
-      .setVisible(false);
+      .setVisible(false)
+      .setDepth(1000);
 
     // Add overlap detection for hole interaction
     this.physics.add.overlap(
@@ -1669,7 +1678,8 @@ class MainScene extends Phaser.Scene {
         padding: { x: 5, y: 3 },
       })
       .setOrigin(0.5)
-      .setVisible(false);
+      .setVisible(false)
+      .setDepth(1000);
 
     // Adiciona overlap para detectar quando o jogador está perto da saída
     this.physics.add.overlap(
