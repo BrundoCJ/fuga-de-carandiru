@@ -20,7 +20,7 @@ class Bot {
     this.angerHits = 0; // conta os socos que tomou antes de atacar
 
     this.hitsDealt = 0; // quantos golpes já deu no jogador
-    this.maxHits = 3; // limite de golpes causados no jogador
+    this.maxHits = 1; // limite de golpes causados no jogador
 
     this.setRandomVelocity();
     this.messageText = null;
