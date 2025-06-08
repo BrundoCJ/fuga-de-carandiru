@@ -66,11 +66,13 @@ class MenuScene extends Phaser.Scene {
       const videoInicio = this.add.video(width / 2, height / 2, 'inicio');
 
       // Adiciona o botão de pular
-      const skipButton = this.add.text(width - 140, 1000, 'Pular', {
-        fontSize: '32px',
+      const skipButton = this.add.text(width - 140, 30, 'Pular', {
+        fontFamily: '"Press Start 2P"',
+        fontSize: '22px',
         fill: '#ffffff',
-        backgroundColor: '#000000',
-        padding: { x: 10, y: 5 }
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        padding: { x: 10, y: 5 },
+        border: { color: '#ffffff', width: 2 }
       })
       .setInteractive({ cursor: 'pointer' })
       .setDepth(1001);
