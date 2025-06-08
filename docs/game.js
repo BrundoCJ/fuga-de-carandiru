@@ -1714,9 +1714,11 @@ class MainScene extends Phaser.Scene {
       bot instanceof Bot ||
       bot instanceof Luladrao ||
       bot instanceof Hugo ||
-      bot instanceof Moreno
+      bot instanceof Moreno ||
+      bot instanceof Guarda
     ) {
-      if (!this.playerInvincible && bot.alive) { // Adicionada verificação de bot.alive
+      if (!this.playerInvincible && bot.alive) {
+        // Adicionada verificação de bot.alive
         if (bot instanceof Bot && bot.hitsDealt >= bot.maxHits) {
           // Bot já bateu 3x, para de perseguir e volta a andar aleatoriamente
           bot.angry = false;
@@ -1868,7 +1870,8 @@ class MainScene extends Phaser.Scene {
           bot.sprite.x,
           bot.sprite.y
         );
-        if (dist < 50 && bot.alive) { // Adicionada verificação de bot.alive
+        if (dist < 50 && bot.alive) {
+          // Adicionada verificação de bot.alive
           bot.takeDamageFrom(this.player);
           this.somSoco.play();
         }
