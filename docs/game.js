@@ -181,6 +181,19 @@ class Luladrao extends Bot {
     this.sprite.body.setOffset(10, 10);
     this.keyItem02 = null;
     this.isDying = false; // Flag para prevenir múltiplas chamadas de die()
+
+    // Mensagens personalizadas do Luladrao
+    this.customMessages = [
+      "Como o Brasil está na UTI, coloquei um médico pra ser ministro da Fazenda",
+      "Se está caro, é só não comprar",
+      "FAZ O L",
+      "Minha mãe era uma mulher que nasceu analfabeta",
+      "Eu ROUBEI uma CHAVE",
+      "O salário mínimo nunca será ideal porque ele é mínimo",
+      "Feijão puro, feijão puro, feijão puro? Chega!",
+      "A gente saia correndo atrás dos calanguinho, pegava o calanguinho, comia os calanguinho, e não tinha mais calanguinho",
+      "Eu só sei contar até 9"
+    ];
   }
 
   die() {
@@ -309,8 +322,19 @@ class Moreno extends Bot {
     super(scene, x, y);
     this.sprite.setTexture("moreno_frente1");
     this.sprite.setScale(0.2);
-    this.sprite.body.setSize(100, 200); // Largura: 40, Altura: 80 (ajuste conforme necessário)
+    this.sprite.body.setSize(100, 200);
     this.sprite.body.setOffset(10, 10);
+
+    // Mensagens personalizadas do Moreno
+    this.customMessages = [
+      "AOOOOOOOOWWWW",
+      "Vamos fazer uma trilha de bike?",
+      "Tá no drive, tá no drive",
+      "Galera, lembra que a lista é até domingo",
+      "Você vai chupar",
+      "Tá merecendo uma chupadinha",
+      "Vem resolver o exercício no quadro"
+    ];
   }
 
   // Sobrescrevendo o método die() para o bot Moreno
@@ -389,8 +413,17 @@ class Hugo extends Bot {
     super(scene, x, y);
     this.sprite.setTexture("hugo_frente1");
     this.sprite.setScale(0.19);
-    this.sprite.body.setSize(100, 290); // Largura: 40, Altura: 80 (ajuste conforme necessário)
+    this.sprite.body.setSize(100, 290);
     this.sprite.body.setOffset(60, 60);
+
+    // Mensagens personalizadas do Hugo
+    this.customMessages = [
+      "Quem tá me ouvindo bate uma palma",
+      "GitHub Desktop não é coisa de viado",
+      "Essa foi a turma com a média mais baixa",
+      "Vou fazer a chamada",
+      "Se você tivesse prestado atenção..."
+    ];
   }
   playAnimIfNotPlaying(key) {
     if (this.sprite.anims.currentAnim?.key !== key) {
@@ -2014,6 +2047,11 @@ class MainScene extends Phaser.Scene {
         bot.messageText.destroy();
       }
 
+      // Se o bot tiver mensagens personalizadas, use-as
+      if (bot.customMessages) {
+        message = Phaser.Utils.Array.GetRandom(bot.customMessages);
+      }
+
       bot.messageText = this.add
         .text(bot.sprite.x, bot.sprite.y - 40, message, {
           font: "16px Arial",
@@ -2022,7 +2060,8 @@ class MainScene extends Phaser.Scene {
           padding: { x: 5, y: 3 },
           align: "center",
         })
-        .setOrigin(0.5);
+        .setOrigin(0.5)
+        .setDepth(1000);
 
       this.time.delayedCall(2000, () => {
         if (bot.messageText) {
@@ -2040,7 +2079,8 @@ class MainScene extends Phaser.Scene {
           padding: { x: 5, y: 3 },
           align: "center",
         })
-        .setOrigin(0.5);
+        .setOrigin(0.5)
+        .setDepth(1000);
 
       this.time.delayedCall(2000, () => {
         text.destroy();
