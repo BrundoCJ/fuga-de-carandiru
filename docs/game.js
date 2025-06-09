@@ -754,20 +754,12 @@ class MainScene extends Phaser.Scene {
     super("MainScene");
 
     this.botMessages = [
-      "Some daqui!",
-      "Não quero falar agora.",
-      "Pra fugir da prisão, tente o duto secreto.",
       "Se manda!",
       "Tá olhando o quê?",
       "Foi preso por quê?",
-      "Tem um plano aí?",
       "Cuidado com os guardas.",
-      "Não deixe ninguém te enganar.",
-      "Já viu o túnel na cela 3?",
       "Procure o velho Lula, dizem que ele está com uma chave.",
       "Se precisar de ajuda, me chame.",
-      "Nunca confie nas promessas dos outros.",
-      "Lembre-se: aqui dentro, o tempo passa devagar.",
       "Tem uma chave enterrada lá fora",
     ];
 
