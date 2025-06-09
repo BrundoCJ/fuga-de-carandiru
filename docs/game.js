@@ -1514,7 +1514,7 @@ class MainScene extends Phaser.Scene {
       },
       callbackScope: this,
     });
-
+    
     //BARREIRAS ==========================================================
 
     // Array para guardar as barreiras
@@ -1535,7 +1535,7 @@ class MainScene extends Phaser.Scene {
     this.walls.push(barrier2);
 
     //BORDA INFERIOR
-    const barrier3 = this.add.rectangle(1024, 1080, 2200, 117);
+    const barrier3 = this.add.rectangle(1024, 1080, 2200, 137);
     this.physics.add.existing(barrier3, true);
     barrier3.setVisible(false);
     this.walls.push(barrier3);
@@ -1577,17 +1577,17 @@ class MainScene extends Phaser.Scene {
     barrier4.setVisible(false);
     this.walls.push(barrier10);
 
-    const barrier11 = this.add.rectangle(910, 770, 16, 410);
+    const barrier11 = this.add.rectangle(910, 750, 16, 370);
     this.physics.add.existing(barrier11, true);
     barrier4.setVisible(false);
     this.walls.push(barrier11);
 
-    const barrier12 = this.add.rectangle(1255, 770, 28, 410);
+    const barrier12 = this.add.rectangle(1255, 750, 28, 370);
     this.physics.add.existing(barrier12, true);
     barrier4.setVisible(false);
     this.walls.push(barrier12);
 
-    const barrier13 = this.add.rectangle(1578, 770, 30, 410);
+    const barrier13 = this.add.rectangle(1578, 750, 30, 370);
     this.physics.add.existing(barrier13, true);
     barrier4.setVisible(false);
     this.walls.push(barrier13);
@@ -1612,17 +1612,17 @@ class MainScene extends Phaser.Scene {
     barrier4.setVisible(false);
     this.walls.push(barrier17);
 
-    const barrier18 = this.add.rectangle(1250, 943, 240, 65);
+    const barrier18 = this.add.rectangle(1250, 927, 240, 45);
     this.physics.add.existing(barrier18, true);
     barrier4.setVisible(false);
     this.walls.push(barrier18);
 
-    const barrier19 = this.add.rectangle(970, 943, 135, 65);
+    const barrier19 = this.add.rectangle(970, 927, 135, 45);
     this.physics.add.existing(barrier19, true);
     barrier4.setVisible(false);
     this.walls.push(barrier19);
 
-    const barrier20 = this.add.rectangle(1527, 943, 135, 65);
+    const barrier20 = this.add.rectangle(1527, 927, 135, 45);
     this.physics.add.existing(barrier20, true);
     barrier4.setVisible(false);
     this.walls.push(barrier20); //barreura baixo
@@ -1751,6 +1751,22 @@ class MainScene extends Phaser.Scene {
     this.physics.add.existing(barrier46, true);
     barrier4.setVisible(false);
     this.walls.push(barrier46);
+
+    const barrier47 = this.add.rectangle(332, 950, 520, 22);
+    this.physics.add.existing(barrier47, true);
+    barrier4.setVisible(false);
+    this.walls.push(barrier47);
+
+    const barrier48 = this.add.rectangle(150, 820, 65, 40);
+    this.physics.add.existing(barrier48, true);
+    barrier4.setVisible(false);
+    this.walls.push(barrier48);
+
+    const barrier49 = this.add.rectangle(700, 60, 160, 40);
+    this.physics.add.existing(barrier49, true);
+    barrier4.setVisible(false);
+    this.walls.push(barrier49);
+
 
     // Adicionar colisões para todas as barreiras:
     this.walls.forEach((barrier) => {
