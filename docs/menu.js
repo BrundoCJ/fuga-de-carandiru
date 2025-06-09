@@ -75,6 +75,8 @@ class MenuScene extends Phaser.Scene {
       // Adiciona e reproduz o vídeo de início
       const videoInicio = this.add.video(width / 2, height / 2, "inicio");
 
+      videoInicio.setVolume(0.047); 
+
       // Adiciona o botão de pular
       const skipButton = this.add
         .text(width - 140, 30, "Pular", {
