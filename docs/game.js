@@ -12,7 +12,7 @@ class Bot {
     this.sprite.body.setSize(30, 70);
     this.sprite.body.setOffset(15, 10);
 
-    this.maxHealth = 15; // Reduzido de 30 para 15
+    this.maxHealth = 5; // Reduzido de 30 para 15
     this.health = this.maxHealth;
     this.alive = true;
 
@@ -519,7 +519,7 @@ class Guarda {
     this.isChasing = false;
     this.chaseTimer = null;
 
-    this.maxHealth = 100;
+    this.maxHealth = 1;
     this.health = this.maxHealth;
     this.alive = true;
 
@@ -1726,7 +1726,7 @@ class MainScene extends Phaser.Scene {
       escape.y
     );
 
-    if (dist < 50) {
+    if (dist < 30) { // Reduzido de 50 para 30 pixels
       this.isNearEscape = true;
       this.escapeInteractionText.setPosition(escape.x, escape.y - 40);
       this.escapeInteractionText.setVisible(true);
@@ -1798,7 +1798,13 @@ class MainScene extends Phaser.Scene {
 
   handleHoleOverlap(player, hole) {
     // Only show interaction if hole interaction is enabled
-    if (!this.holeInteractionEnabled) return;
+    if (!this.holeInteractionEnabled) {
+      if (this.holeInteractionText) {
+        this.holeInteractionText.setVisible(false);
+      }
+      this.isNearHole = false;
+      return;
+    }
 
     const dist = Phaser.Math.Distance.Between(
       player.x,
@@ -1807,13 +1813,17 @@ class MainScene extends Phaser.Scene {
       hole.y
     );
 
-    if (dist < 50) {
+    if (dist < 30) { // Reduzido de 50 para 30 pixels
       this.isNearHole = true;
-      this.holeInteractionText.setPosition(hole.x, hole.y - 40);
-      this.holeInteractionText.setVisible(true);
+      if (this.holeInteractionText) {
+        this.holeInteractionText.setPosition(hole.x, hole.y - 40);
+        this.holeInteractionText.setVisible(true);
+      }
     } else {
       this.isNearHole = false;
-      this.holeInteractionText.setVisible(false);
+      if (this.holeInteractionText) {
+        this.holeInteractionText.setVisible(false);
+      }
     }
   }
 
@@ -1965,11 +1975,16 @@ class MainScene extends Phaser.Scene {
     }
 
     // Update hole interaction text position if visible
-    if (this.holeInteractionText.visible) {
-      this.holeInteractionText.setPosition(
-        this.holeSprite.x,
-        this.holeSprite.y - 40
-      );
+    if (this.holeInteractionText) {
+      if (this.isNearHole && this.holeInteractionEnabled) {
+        this.holeInteractionText.setPosition(
+          this.holeSprite.x,
+          this.holeSprite.y - 40
+        );
+        this.holeInteractionText.setVisible(true);
+      } else {
+        this.holeInteractionText.setVisible(false);
+      }
     }
 
     // Handle escape interaction
@@ -1994,6 +2009,16 @@ class MainScene extends Phaser.Scene {
         if (bot.sprite) bot.sprite.setVisible(false);
       });
 
+      // Esconde elementos do HUD
+      if (this.escapeInteractionText) this.escapeInteractionText.setVisible(false);
+      if (this.holeInteractionText) this.holeInteractionText.setVisible(false);
+      if (this.timerText) this.timerText.setVisible(false);
+      if (this.livesBar) this.livesBar.setVisible(false);
+      this.livesSprites.forEach(sprite => sprite.setVisible(false));
+      if (this.keyIcon) this.keyIcon.setVisible(false);
+      if (this.keyIcon02) this.keyIcon02.setVisible(false);
+      if (this.keyIcon03) this.keyIcon03.setVisible(false);
+
       // Mostra a imagem de vitória
       const victoryImage = this.add
         .image(
@@ -2002,7 +2027,8 @@ class MainScene extends Phaser.Scene {
           "portaFuga"
         )
         .setScale(0.5)
-        .setScrollFactor(0);
+        .setScrollFactor(0)
+        .setDepth(2000); // Maior depth para garantir que fique acima de tudo
 
       console.log("Iniciando contagem regressiva para reiniciar...");
 
