@@ -172,6 +172,104 @@ class Bot {
     }
   }
 }
+
+class Bot2 extends Bot {
+  constructor(scene, x, y) {
+    super(scene, x, y);
+    this.sprite.setTexture("bot2_frente1");
+    this.sprite.setScale(0.26);
+    this.sprite.body.setSize(100, 200);
+    this.sprite.body.setOffset(10, 10);
+  }
+
+  // Sobrescrevendo o método die() para o bot 
+  die() {
+    this.alive = false; // Marca o bot como morto
+    this.sprite.setVelocity(0, 0);
+    this.sprite.setTint(0xff6666);
+    this.sprite.setAlpha(0.5);
+    this.sprite.anims.stop();
+    this.healthBar.clear();
+    this.healthBar.setAlpha(0);
+  }
+
+  updateAnimation() {
+    if (!this.alive) return;
+    const vx = this.sprite.body.velocity.x;
+    const vy = this.sprite.body.velocity.y;
+
+    if (Math.abs(vx) > Math.abs(vy)) {
+      if (vx > 0) this.playAnimIfNotPlaying("bot2_walk_right");
+      else if (vx < 0) this.playAnimIfNotPlaying("bot2_walk_left");
+      else this.stopAnimAndSetFrame("right");
+    } else if (Math.abs(vy) > 0) {
+      if (vy > 0) this.playAnimIfNotPlaying("bot2_walk_down");
+      else if (vy < 0) this.playAnimIfNotPlaying("bot2_walk_up");
+    } else {
+      this.stopAnimAndSetFrame("down");
+    }
+  }
+
+  stopAnimAndSetFrame(direction) {
+    this.sprite.anims.stop();
+    const frameKeyMap = {
+      down: "bot2_frente1",
+      up: "bot2_costas1",
+      left: "bot2_esquerda1",
+      right: "bot2_direita1",
+    };
+    this.sprite.setTexture(frameKeyMap[direction]);
+  }
+}
+
+class Bot3 extends Bot {
+  constructor(scene, x, y) {
+    super(scene, x, y);
+    this.sprite.setTexture("bot3_frente1");
+    this.sprite.setScale(0.26);
+    this.sprite.body.setSize(100, 200);
+    this.sprite.body.setOffset(10, 10);
+  }
+
+  // Sobrescrevendo o método die() para o bot 
+  die() {
+    this.alive = false; // Marca o bot como morto
+    this.sprite.setVelocity(0, 0);
+    this.sprite.setTint(0xff6666);
+    this.sprite.setAlpha(0.5);
+    this.sprite.anims.stop();
+    this.healthBar.clear();
+    this.healthBar.setAlpha(0);
+  }
+
+  updateAnimation() {
+    if (!this.alive) return;
+    const vx = this.sprite.body.velocity.x;
+    const vy = this.sprite.body.velocity.y;
+
+    if (Math.abs(vx) > Math.abs(vy)) {
+      if (vx > 0) this.playAnimIfNotPlaying("bot3_walk_right");
+      else if (vx < 0) this.playAnimIfNotPlaying("bot3_walk_left");
+      else this.stopAnimAndSetFrame("right");
+    } else if (Math.abs(vy) > 0) {
+      if (vy > 0) this.playAnimIfNotPlaying("bot3_walk_down");
+      else if (vy < 0) this.playAnimIfNotPlaying("bot3_walk_up");
+    } else {
+      this.stopAnimAndSetFrame("down");
+    }
+  }
+
+  stopAnimAndSetFrame(direction) {
+    this.sprite.anims.stop();
+    const frameKeyMap = {
+      down: "bot3_frente1",
+      up: "bot3_costas1",
+      left: "bot3_esquerda1",
+      right: "bot3_direita1",
+    };
+    this.sprite.setTexture(frameKeyMap[direction]);
+  }
+}
 class Luladrao extends Bot {
   constructor(scene, x, y) {
     super(scene, x, y);
@@ -837,6 +935,24 @@ class MainScene extends Phaser.Scene {
     this.load.image("player_esquerda2", "assets/player_esquerda2.png");
     this.load.image("player_esquerda3", "assets/player_esquerda3.png");
 
+    this.load.image("bot2_frente1", "assets/bot2_frente1.png");
+    this.load.image("bot2_frente2", "assets/bot2_frente2.png");
+    this.load.image("bot2_costas1", "assets/bot2_costas1.png");
+    this.load.image("bot2_costas2", "assets/bot2_costas2.png");
+    this.load.image("bot2_esquerda1", "assets/bot2_esquerda1.png");
+    this.load.image("bot2_esquerda2", "assets/bot2_esquerda2.png");
+    this.load.image("bot2_direita1", "assets/bot2_direita1.png");
+    this.load.image("bot2_direita2", "assets/bot2_direita2.png");
+
+    this.load.image("bot3_frente1", "assets/bot3_frente1.png");
+    this.load.image("bot3_frente2", "assets/bot3_frente2.png");
+    this.load.image("bot3_costas1", "assets/bot3_costas1.png");
+    this.load.image("bot3_costas2", "assets/bot3_costas2.png");
+    this.load.image("bot3_esquerda1", "assets/bot3_esquerda1.png");
+    this.load.image("bot3_esquerda2", "assets/bot3_esquerda2.png");
+    this.load.image("bot3_direita1", "assets/bot3_direita1.png");
+    this.load.image("bot3_direita2", "assets/bot3_direita2.png");
+
     this.load.image("guarda_frente1", "assets/guarda_frente1.png");
     this.load.image("guarda_frente2", "assets/guarda_frente2.png");
     this.load.image("guarda_costas1", "assets/guarda_costas1.png");
@@ -963,6 +1079,56 @@ class MainScene extends Phaser.Scene {
         { key: "player_direita2" },
         { key: "player_direita3" },
       ],
+      frameRate: 8,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "bot2_walk_down",
+      frames: [{ key: "bot2_frente1" }, { key: "bot2_frente2" }],
+      frameRate: 8,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "bot2_walk_up",
+      frames: [{ key: "bot2_costas1" }, { key: "bot2_costas2" }],
+      frameRate: 8,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "bot2_walk_left",
+      frames: [{ key: "bot2_esquerda1" }, { key: "bot2_esquerda2" }],
+      frameRate: 8,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "bot2_walk_right",
+      frames: [{ key: "bot2_direita1" }, { key: "bot2_direita2" }],
+      frameRate: 8,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "bot3_walk_down",
+      frames: [{ key: "bot3_frente1" }, { key: "bot3_frente2" }],
+      frameRate: 8,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "bot3_walk_up",
+      frames: [{ key: "bot3_costas1" }, { key: "bot3_costas2" }],
+      frameRate: 8,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "bot3_walk_left",
+      frames: [{ key: "bot3_esquerda1" }, { key: "bot3_esquerda2" }],
+      frameRate: 8,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "bot3_walk_right",
+      frames: [{ key: "bot3_direita1" }, { key: "bot3_direita2" }],
       frameRate: 8,
       repeat: -1,
     });
@@ -1213,12 +1379,32 @@ class MainScene extends Phaser.Scene {
     this.zKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
     this.bots = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 1; i++) {
       //ALTERAR QUANTIDADE DE BOTS (TIREI PRA FAZER AS BARREIRAS)
       const x = Phaser.Math.Between(50, 750);
       const y = Phaser.Math.Between(50, 550);
       const bot = new Bot(this, x, y);
       this.bots.push(bot);
+    }
+
+    this.bots2 = [];
+    for (let i = 0; i < 3; i++) {
+      //ALTERAR QUANTIDADE DE BOTS (TIREI PRA FAZER AS BARREIRAS)
+      const x = Phaser.Math.Between(50, 750);
+      const y = Phaser.Math.Between(50, 550);
+      const bot2 = new Bot2(this, x, y);
+      this.bots2.push(bot2);
+      this.bots.push(bot2);
+    }
+
+    this.bots3 = [];
+    for (let i = 0; i < 2; i++) {
+      //ALTERAR QUANTIDADE DE BOTS (TIREI PRA FAZER AS BARREIRAS)
+      const x = Phaser.Math.Between(50, 750);
+      const y = Phaser.Math.Between(50, 550);
+      const bot3 = new Bot3(this, x, y);
+      this.bots3.push(bot3);
+      this.bots.push(bot3);
     }
 
     this.guards = [];
@@ -1747,6 +1933,8 @@ class MainScene extends Phaser.Scene {
 
     if (
       bot instanceof Bot ||
+      bot instanceof Bot2 ||
+      bot instanceof Bot3 ||
       bot instanceof Luladrao ||
       bot instanceof Hugo ||
       bot instanceof Moreno ||
