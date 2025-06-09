@@ -12,7 +12,7 @@ class Bot {
     this.sprite.body.setSize(30, 70);
     this.sprite.body.setOffset(15, 10);
 
-    this.maxHealth = 5; // Reduzido de 30 para 15
+    this.maxHealth = 10; // Reduzido de 30 para 15
     this.health = this.maxHealth;
     this.alive = true;
 
@@ -617,7 +617,7 @@ class Guarda {
     this.isChasing = false;
     this.chaseTimer = null;
 
-    this.maxHealth = 1;
+    this.maxHealth = 30;
     this.health = this.maxHealth;
     this.alive = true;
 
