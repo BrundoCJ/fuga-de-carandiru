@@ -75,7 +75,12 @@ class MenuScene extends Phaser.Scene {
       // Adiciona e reproduz o vídeo de início
       const videoInicio = this.add.video(width / 2, height / 2, "inicio");
 
-      videoInicio.setVolume(0.047); 
+      videoInicio.setVolume(0.025);
+
+      // Lower background music volume during video
+      if (this.musicaJogo) {
+        this.musicaJogo.setVolume(0.0);
+      }
 
       // Adiciona o botão de pular
       const skipButton = this.add
@@ -188,12 +193,18 @@ class MenuScene extends Phaser.Scene {
       // Adiciona evento de clique no botão pular
       skipButton.on("pointerdown", () => {
         this.sound.play("click");
+        if (this.musicaJogo) {
+          this.musicaJogo.setVolume(0.2);
+        }
         showNewGameScreen();
       });
 
       // Adiciona evento de teclado para pular com ESC
       this.input.keyboard.on("keydown-ESC", () => {
         if (videoInicio.isPlaying()) {
+          if (this.musicaJogo) {
+            this.musicaJogo.setVolume(0.2);
+          }
           showNewGameScreen();
         }
       });
@@ -206,6 +217,10 @@ class MenuScene extends Phaser.Scene {
       videoInicio.play(false);
 
       videoInicio.once("complete", () => {
+        // Restore original music volume
+        if (this.musicaJogo) {
+          this.musicaJogo.setVolume(0.2);
+        }
         showNewGameScreen();
       });
     };
