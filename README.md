@@ -4,7 +4,7 @@
 Fuga de Carandiru é um jogo web desenvolvido como trabalho em grupo para a disciplina de Programação Front End. O jogo apresenta uma narrativa envolvente onde o jogador precisa escapar do complexo penitenciário, enfrentando desafios e tomando decisões estratégicas para garantir sua liberdade.
 
 ## 🎯 Link para o Jogo
-Jogue agora: [Fuga de Carandiru](https://brundocj.github.io/fuga-de-carandiru/)
+Jogue agora: [Fuga de Carandiru](https://brundocj.github.io/fuga-de-carandiru/)!
 
 ## 🎲 Funcionalidades Principais
 - Sistema de movimentação intuitivo
